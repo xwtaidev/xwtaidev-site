@@ -1,6 +1,6 @@
-import Image from "next/image";
-import { DetailButton, DetailLink } from "@/components/detail-trigger";
+import { DetailLink } from "@/components/detail-trigger";
 import { Icon } from "@/components/icon";
+import { OrbitNavigation } from "@/components/orbit-navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { Tooltip } from "@/components/tooltip";
 import { profile } from "@/content/site";
@@ -10,13 +10,9 @@ export default function HomePage() {
     <>
       <a className="skip-link" href="#about">Skip to introduction</a>
       <main className="page" id="about">
-        <header className="identity">
+        <header className="identity identity-orbit">
           <h1 className="sr-only">{profile.name} — {profile.role}</h1>
-          <Tooltip id="identity-hint" content="A little about me" className="identity-wrap">
-            <DetailButton detail="about" className="identity-button t-tt-trigger" aria-label={`A little about ${profile.name}`} aria-describedby="identity-hint">
-              <Image className="identity-avatar" src="/assets/avatar.jpg" alt={`Portrait of ${profile.name}`} width={40} height={40} sizes="40px" priority />
-            </DetailButton>
-          </Tooltip>
+          <OrbitNavigation />
         </header>
 
         <section className="introduction" aria-label="Introduction">

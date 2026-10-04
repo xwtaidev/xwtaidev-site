@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "serve out --listen tcp://127.0.0.1:4173",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "next": "16.3.8",

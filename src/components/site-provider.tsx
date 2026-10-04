@@ -95,7 +95,14 @@ export function SiteProvider({ children }: { children: ReactNode }) {
           <h2 id="detail-title">{view?.title}</h2>
           <div className="dialog-copy" id="detail-description">
             {view?.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {view?.email && <p><a href={`mailto:${view.email}`}>{view.email}</a></p>}
+            {view?.email && (
+              <p className="project-reference">
+                <a href={`mailto:${view.email}`}>
+                  <Image className="project-link-icon" src="/assets/icons/gmail.svg" alt="" width={16} height={16} />
+                  <span>{view.email}</span>
+                </a>
+              </p>
+            )}
             {view?.links && (
               <div className="project-links">
                 {view.links.map((link) => (

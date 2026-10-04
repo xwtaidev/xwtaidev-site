@@ -13,6 +13,9 @@ const paths = {
   board: "kanban",
   calendar: "calendar-blank",
   workspace: "stack-simple",
+  orbitAbout: "orbit-user",
+  orbitBlog: "orbit-notebook",
+  orbitProducts: "orbit-flask",
 } as const;
 
 export function Icon({ name, className = "" }: { name: keyof typeof paths; className?: string }) {

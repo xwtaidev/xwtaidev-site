@@ -48,6 +48,9 @@ test-results/
 !.env.*.template
 !.env.sample
 !.env.*.sample
+.dev.vars*
+!.dev.vars.example
+!.dev.vars.*.example
 
 # Local hosting metadata
 .vercel/

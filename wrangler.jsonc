@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "xwtaidev-site",
+  "compatibility_date": "2026-10-04",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "preview_urls": true,
+  "previews": {}
+}

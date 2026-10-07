@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { profile } from "@/content/site";
 import { getOrbitLayout } from "@/lib/orbit-layout";
+import { themeAvatars } from "@/lib/theme";
 import { Icon } from "./icon";
 import { useSite } from "./site-provider";
 
@@ -50,7 +51,7 @@ export function OrbitNavigation({ currentPage }: { currentPage?: "blog" | "produ
     const root = rootRef.current, panel = panelRef.current;
     if (!root || !panel) return;
     function positionOrbit() {
-      const avatar = root!.querySelector<HTMLImageElement>(".identity-avatar");
+      const avatar = root!.querySelector<HTMLElement>(".orbit-photo");
       const track = panel!.querySelector<HTMLElement>(".orbit-track");
       if (!avatar || !track || !panel!.clientWidth) return;
       const avatarBox = avatar.getBoundingClientRect(), rootBox = root!.getBoundingClientRect();
@@ -116,7 +117,8 @@ export function OrbitNavigation({ currentPage }: { currentPage?: "blog" | "produ
         onClick={toggleNavigation}
       >
         <span className="orbit-photo">
-          <Image className="identity-avatar" src="/assets/avatar.jpg" alt={`Portrait of ${profile.name}`} width={40} height={40} sizes="40px" priority />
+          <Image className="identity-avatar avatar-light" src={themeAvatars.light} alt={`Portrait of ${profile.name}`} width={40} height={40} sizes="40px" priority />
+          <Image className="identity-avatar avatar-dark" src={themeAvatars.dark} alt={`Portrait of ${profile.name}`} width={40} height={40} sizes="40px" priority />
           <span className="orbit-mark" aria-hidden="true">+</span>
         </span>
         <span className="orbit-label">Explore</span>

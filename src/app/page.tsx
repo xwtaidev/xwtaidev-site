@@ -2,6 +2,7 @@ import { DetailLink } from "@/components/detail-trigger";
 import { Icon } from "@/components/icon";
 import { OrbitNavigation } from "@/components/orbit-navigation";
 import { SiteFooter } from "@/components/site-footer";
+import { TechTerm } from "@/components/tech-term";
 import { Tooltip } from "@/components/tooltip";
 import { profile } from "@/content/site";
 
@@ -17,6 +18,10 @@ export default function HomePage() {
 
         <section className="introduction" aria-label="Introduction">
           <p className="intro-lead">I&apos;m <span className="name-reveal">{profile.name}</span>, a developer and independent maker. I build AI tools and productivity apps around the everyday problems I want to solve.</p>
+
+          <p className="expertise-copy">
+            My work spans <TechTerm icon="tech-agent" monochrome>AI agents</TechTerm>, <TechTerm icon="tech-python">Python</TechTerm> and <TechTerm icon="tech-java">Java</TechTerm> backends, web apps with <TechTerm icon="tech-typescript">TypeScript</TechTerm>, <TechTerm icon="tech-react">React</TechTerm> and <TechTerm icon="tech-nextjs" monochrome>Next.js</TechTerm>, <TechTerm icon="obsidian">Obsidian</TechTerm> plugins, and desktop apps with <TechTerm icon="tech-rust" monochrome>Rust</TechTerm> and <TechTerm icon="tech-tauri">Tauri</TechTerm>.
+          </p>
 
           <p>In Obsidian, I&apos;m making <Tooltip id="lattice-hint" content="Kanban for your notes · Obsidian plugin"><DetailLink detail="lattice" className="chip t-tt-trigger" aria-describedby="lattice-hint"><Icon name="board" className="chip-icon" /><span>Lattice Board</span></DetailLink></Tooltip> for visual note organization, and <Tooltip id="weekly-hint" content="Weekly planning, inside your vault"><DetailLink detail="weekly" className="chip t-tt-trigger" aria-describedby="weekly-hint"><Icon name="calendar" className="chip-icon" /><span>Weekly Schedule</span></DetailLink></Tooltip> for planning and reviewing the week.</p>
 

@@ -6,11 +6,14 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="description" content="Xu is a developer and independent maker, building small, thoughtful tools for everyday life." />
     <title>Xu — Developer & Independent Maker</title>
-    <link rel="icon" href="assets/avatar.jpg" type="image/jpeg" />
+    <link id="site-icon" rel="icon" href="assets/favicon-light.ico" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" />
     <script>
       try {
         const savedTheme = localStorage.getItem('xwtaidev-site-theme') ?? localStorage.getItem('xu-portfolio-theme');
-        if (savedTheme === 'dark') document.documentElement.dataset.theme = 'dark';
+        if (savedTheme === 'dark') {
+          document.documentElement.dataset.theme = 'dark';
+          document.getElementById('site-icon')?.setAttribute('href', 'assets/favicon-dark.ico');
+        }
       } catch {}
     </script>
     <link rel="stylesheet" href="styles.css" />
@@ -23,7 +26,8 @@
         <h1 class="visually-hidden">Xu — Developer & Independent Maker</h1>
         <span class="t-tt-wrap identity-wrap">
           <button class="identity-button t-tt-trigger" type="button" data-view="about" aria-label="A little about Xu" aria-describedby="identity-hint">
-            <img class="identity-avatar" src="assets/avatar.jpg" alt="Portrait of Xu" width="40" height="40" />
+            <img class="identity-avatar avatar-light" src="assets/avatar-light.jpg" alt="Portrait of Xu" width="40" height="40" />
+            <img class="identity-avatar avatar-dark" src="assets/avatar.jpg" alt="Portrait of Xu" width="40" height="40" />
           </button>
           <span class="t-tt" id="identity-hint" role="tooltip">A little about me</span>
         </span>

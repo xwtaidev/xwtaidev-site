@@ -23,7 +23,7 @@ export const details: Record<DetailKey, DetailContent> = {
     title: "Small things, made carefully.",
     paragraphs: [
       "My work spans AI tools, Obsidian plugins and desktop apps. I tend to start with something I need, then build a small tool around it.",
-      "TypeScript, React and Next.js are part of my web toolkit. For desktop apps I also work with Tauri and Rust.",
+      "I work on agent workflows, tool integration and memory systems, alongside backend development with Python and Java. My web toolkit includes TypeScript, React and Next.js; for desktop apps, I use Tauri and Rust.",
       "Other projects include FileSniffer, an early Mac disk-space analyzer, and TokenPulse, a dashboard for local AI token usage and costs.",
     ],
     links: [{ href: profile.github, label: "Explore my work on GitHub", icon: "github" }],

@@ -103,6 +103,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .identity-orbit { min-height: 40px; line-height: 1.6; }
 .identity-button { width: 40px; height: 40px; padding: 0; border: 0; background: none; border-radius: 50%; overflow: hidden; }
 .identity-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: 50% 55%; transition: transform 250ms var(--modal-ease); }
+.avatar-dark { display: none; }
+html[data-theme="dark"] .avatar-light { display: none; }
+html[data-theme="dark"] .avatar-dark { display: block; }
 .identity-button:hover .identity-avatar { transform: scale(1.04); }
 .orbit-navigation { position: relative; min-height: 40px; }
 .orbit-trigger { position: relative; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: var(--text); font-size: 12px; line-height: 1.6; }
@@ -129,6 +132,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .introduction { display: flex; flex-direction: column; gap: 38px; }
 .introduction p { margin: 0; }
 .intro-lead { color: var(--text-strong); }
+.tech-term { display: inline-flex; align-items: baseline; gap: 4px; color: var(--text-strong); white-space: nowrap; }
+.tech-term-icon { align-self: center; flex-shrink: 0; width: 14px; height: 14px; object-fit: contain; }
+.tech-term-icon-monochrome { filter: var(--icon-filter); }
 .name-reveal { display: inline-block; }
 @supports ((background-clip: text) or (-webkit-background-clip: text)) {
   .name-reveal {

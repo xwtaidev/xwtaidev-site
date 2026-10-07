@@ -61,6 +61,7 @@ const views = {
 
 function syncThemeControl() {
   const isDark = root.dataset.theme === 'dark';
+  document.getElementById('site-icon')?.setAttribute('href', isDark ? 'assets/favicon-dark.ico' : 'assets/favicon-light.ico');
   const label = isDark ? 'Switch to light theme' : 'Switch to dark theme';
   themeToggle.setAttribute('aria-pressed', String(isDark));
   themeToggle.setAttribute('aria-label', label);

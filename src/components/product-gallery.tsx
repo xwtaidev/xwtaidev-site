@@ -33,7 +33,7 @@ export function ProductGallery() {
       <nav className="product-gallery-controls" aria-label="Gallery controls">
         <div className="product-gallery-utilities" inert={!closed} aria-hidden={!closed}>
           <Link className="product-gallery-home" href="/" aria-label="Back to home">
-            <Image className="signature" src="/assets/signature-xwt.png" alt="" width={64} height={25} sizes="64px" />
+            <Icon name="back" className="product-back-icon" />
             <span>Home</span>
           </Link>
           <ThemeButton />

@@ -40,7 +40,7 @@
 .product-gallery-open-controls { grid-area: 1 / 1; justify-self: center; display: flex; align-items: center; gap: 24px; opacity: 1; visibility: visible; transition: opacity 250ms ease-out 150ms, visibility 0s 150ms; }
 .product-gallery[data-phase="closed"] .product-gallery-open-controls { opacity: 0; visibility: hidden; transition: opacity 150ms ease-out, visibility 0s 150ms; }
 .product-gallery-controls .theme-toggle { width: 44px; height: 44px; }
-.product-gallery-home { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--text-quiet); font-size: 12px; text-decoration: none; transition: color 150ms ease; }
+.product-gallery-home { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; color: var(--text-quiet); font-size: 12px; text-decoration: none; transition: color 150ms ease; }
 .product-gallery-home:hover, .product-gallery-home:focus-visible { color: var(--text-strong); }
 .products-page { width: min(1120px, calc(100% - 48px)); margin: auto; padding: 110px 0 36px; }
 .products-header { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 44px; }

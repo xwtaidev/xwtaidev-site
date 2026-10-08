@@ -1,5 +1,6 @@
 import {
   clamp,
+  getDampedYaw,
   getGalleryCardPose,
   getGalleryGeometry,
   getTransitionProgress,
@@ -32,7 +33,13 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   const saved = store.getSnapshot();
   let phase: GalleryPhase = saved.phase === "open" || saved.phase === "opening" ? "open" : "closed";
   const scene: GalleryScene = { yaw: saved.yaw, pan: saved.pan, selected: saved.selected };
-  const motion = { progress: phase === "open" ? 1 : 0, transition: null as GalleryTransition | null, velocity: 0, hover: 0, hoverTarget: 0, hoverVelocity: 0, tiltX: 0, tiltY: 0 };
+  const motion = {
+    progress: phase === "open" ? 1 : 0,
+    transition: null as GalleryTransition | null,
+    velocity: 0,
+    wheel: null as { target: number; velocity: number } | null,
+    hover: 0, hoverTarget: 0, hoverVelocity: 0, tiltX: 0, tiltY: 0,
+  };
   let geometry = getGalleryGeometry(0, 0);
   let frame = 0, lastFrame = 0, blockedUntil = 0, saveAfterMotion = false, disposed = false;
   let drag: { id: number; x: number; y: number; yaw: number; pan: number; moved: boolean; lastX: number; lastTime: number } | null = null;
@@ -107,13 +114,15 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
     scene.pan = -(slot - 1) * geometry.step;
     scene.selected = index;
     motion.velocity = 0;
+    motion.wheel = null;
     saveAfterMotion = false;
     paint(); persist();
   }
 
   function tick(now: number) {
     if (disposed) return;
-    const dt = Math.min((now - lastFrame) / 1000 || 1 / 60, 0.035);
+    const elapsed = Math.max(0, (now - lastFrame) / 1000) || 1 / 60;
+    const dt = Math.min(elapsed, 0.035);
     lastFrame = now;
     motion.hoverVelocity += ((motion.hoverTarget - motion.hover) * 160 - motion.hoverVelocity * 21) * dt;
     motion.hover += motion.hoverVelocity * dt;
@@ -127,14 +136,20 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
         if (opened) { field.inert = false; cards[scene.selected]?.focus({ preventScroll: true }); }
       }
     }
-    if (!drag && Math.abs(motion.velocity) > 0.12) {
+    if (!drag && motion.wheel) {
+      const next = getDampedYaw(scene.yaw, motion.wheel.target, motion.wheel.velocity, elapsed);
+      scene.yaw = next.yaw;
+      motion.wheel.velocity = next.velocity;
+      if (next.settled) motion.wheel = null;
+      updateSelection();
+    } else if (!drag && Math.abs(motion.velocity) > 0.12) {
       scene.yaw = clamp(scene.yaw + motion.velocity * dt, -150, 150);
       motion.velocity *= Math.exp(-6 * dt);
       updateSelection();
     }
     paint();
     const hovering = Math.abs(motion.hoverTarget - motion.hover) > 0.001 || Math.abs(motion.hoverVelocity) > 0.005;
-    if (motion.transition || Math.abs(motion.velocity) > 0.12 || hovering) frame = requestAnimationFrame(tick);
+    if (motion.transition || motion.wheel || Math.abs(motion.velocity) > 0.12 || hovering) frame = requestAnimationFrame(tick);
     else {
       motion.velocity = 0; motion.hover = motion.hoverTarget; motion.hoverVelocity = 0; frame = 0;
       paint();
@@ -148,7 +163,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
 
   function changeOpen(open: boolean) {
     enter.classList.remove("is-active");
-    motion.velocity = 0; motion.hoverTarget = 0; saveAfterMotion = false;
+    motion.velocity = 0; motion.wheel = null; motion.hoverTarget = 0; saveAfterMotion = false;
     root.classList.remove("is-folder-hover");
     if (open && motion.progress < 0.01) { scene.yaw = 0; scene.pan = 0; scene.selected = 0; }
     const distance = Math.abs((open ? 1 : 0) - motion.progress);
@@ -180,6 +195,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
     if (drag || phase !== "open" || event.button !== 0 || (event.target as Element).closest(".product-folder-hit")) return;
     drag = { id: event.pointerId, x: event.clientX, y: event.clientY, yaw: scene.yaw, pan: scene.pan, moved: false, lastX: event.clientX, lastTime: performance.now() };
     motion.velocity = 0;
+    motion.wheel = null;
   }
 
   function track(event: PointerEvent) {
@@ -236,11 +252,21 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   listen(stage, "dragstart", (event) => event.preventDefault());
   listen(stage, "wheel", (event) => {
     if (phase !== "open" || drag) return;
-    const input = getWheelSceneInput(event, geometry.height, motion.velocity);
+    const input = getWheelSceneInput(event, geometry.height);
     if (!input) return;
     event.preventDefault(); enter.classList.remove("is-active");
-    blockedUntil = performance.now() + 120; saveAfterMotion = true;
-    driveScene(scene.yaw + input.yawDelta, scene.pan, input.velocity, "wheel", true);
+    blockedUntil = performance.now() + 120;
+    const target = clamp((motion.wheel?.target ?? scene.yaw) + input.yawDelta, -150, 150);
+    motion.velocity = 0;
+    root.dataset.lastInput = "wheel";
+    if (reduced.matches) {
+      scene.yaw = target; motion.wheel = null; saveAfterMotion = false;
+      updateSelection(); paint(); persist();
+    } else {
+      motion.wheel = { target, velocity: motion.wheel?.velocity ?? 0 };
+      saveAfterMotion = true;
+      animate();
+    }
   }, { passive: false });
   listen(field, "click", (event) => {
     const card = (event.target as Element).closest<HTMLAnchorElement>(".product-gallery-card");
@@ -250,7 +276,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
     }
     const index = cards.indexOf(card);
     if (index < 0) return;
-    scene.selected = index; motion.velocity = 0; saveAfterMotion = false; persist();
+    scene.selected = index; motion.velocity = 0; motion.wheel = null; saveAfterMotion = false; persist();
   }, { capture: true });
   listen(field, "focusin", (event) => {
     const card = (event.target as Element).closest<HTMLAnchorElement>(".product-gallery-card");
@@ -272,11 +298,17 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   const handleReducedMotion = () => {
     if (!reduced.matches) return;
     motion.velocity = 0; motion.hover = motion.hoverTarget = motion.hoverVelocity = 0;
+    const hadWheel = motion.wheel !== null;
+    if (motion.wheel) {
+      scene.yaw = motion.wheel.target; motion.wheel = null; saveAfterMotion = false;
+      updateSelection();
+    }
     if (motion.transition) {
       motion.progress = motion.transition.to; motion.transition = null;
       setPhase(motion.progress === 1 ? "open" : "closed");
     }
     paint();
+    if (hadWheel) persist();
   };
   reduced.addEventListener("change", handleReducedMotion);
   cleanup.push(() => reduced.removeEventListener("change", handleReducedMotion));

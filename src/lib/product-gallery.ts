@@ -57,11 +57,28 @@ export function getGalleryCardPose(slot: number, geometry: GalleryGeometry, prog
 
 type WheelInput = Pick<WheelEvent, "deltaX" | "deltaY" | "deltaMode"> & Partial<Pick<WheelEvent, "ctrlKey" | "metaKey">>;
 
-export function getWheelSceneInput(event: WheelInput, height: number, velocity: number) {
+export function getDampedYaw(yaw: number, target: number, velocity: number, seconds: number) {
+  const destination = clamp(target, -150, 150);
+  const elapsed = Math.max(0, seconds);
+  if (elapsed === 0) return { yaw, velocity, settled: yaw === destination && velocity === 0 };
+
+  // An analytic critically damped spring keeps the response consistent across refresh rates.
+  const frequency = 16;
+  const offset = yaw - destination;
+  const coefficient = velocity + frequency * offset;
+  const decay = Math.exp(-frequency * elapsed);
+  const rawYaw = destination + (offset + coefficient * elapsed) * decay;
+  const nextYaw = clamp(rawYaw, -150, 150);
+  const nextVelocity = nextYaw === rawYaw ? (velocity - frequency * coefficient * elapsed) * decay : 0;
+  const settled = Math.abs(nextYaw - destination) < 0.005 && Math.abs(nextVelocity) < 0.05;
+  return { yaw: settled ? destination : nextYaw, velocity: settled ? 0 : nextVelocity, settled };
+}
+
+export function getWheelSceneInput(event: WheelInput, height: number) {
   if (event.ctrlKey || event.metaKey) return null;
   const raw = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
   const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? height * 0.6 : 1;
   const delta = clamp(raw * unit, -120, 120);
   if (!delta) return null;
-  return { yawDelta: -delta * 0.16, velocity: clamp(velocity * 0.25 - delta * 1.8, -280, 280) };
+  return { yawDelta: -delta * 0.16 };
 }

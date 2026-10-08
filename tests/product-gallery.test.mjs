@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   getGalleryCardPose,
   getGalleryGeometry,
+  getDampedYaw,
   getTransitionProgress,
   getWheelSceneInput,
 } from "../src/lib/product-gallery.ts";
@@ -65,19 +66,18 @@ test("rotating the scene moves every card while retaining its helix height", () 
 });
 
 test("wheel pixels and lines produce the same rotation", () => {
-  const pixels = getWheelSceneInput({ deltaX: 0, deltaY: 48, deltaMode: 0 }, 720, 0);
-  const lines = getWheelSceneInput({ deltaX: 0, deltaY: 3, deltaMode: 1 }, 720, 0);
+  const pixels = getWheelSceneInput({ deltaX: 0, deltaY: 48, deltaMode: 0 }, 720);
+  const lines = getWheelSceneInput({ deltaX: 0, deltaY: 3, deltaMode: 1 }, 720);
   assert.deepEqual(lines, pixels);
   assert.ok(pixels.yawDelta < 0);
-  assert.ok(pixels.velocity < 0);
 });
 
 test("horizontal trackpads work and zoom gestures remain available", () => {
-  const horizontal = getWheelSceneInput({ deltaX: -40, deltaY: 3, deltaMode: 0 }, 720, 0);
+  const horizontal = getWheelSceneInput({ deltaX: -40, deltaY: 3, deltaMode: 0 }, 720);
   assert.ok(horizontal.yawDelta > 0);
-  assert.equal(getWheelSceneInput({ deltaX: 0, deltaY: 40, deltaMode: 0, ctrlKey: true }, 720, 0), null);
-  assert.equal(getWheelSceneInput({ deltaX: 0, deltaY: 40, deltaMode: 0, metaKey: true }, 720, 0), null);
-  assert.equal(getWheelSceneInput({ deltaX: 0, deltaY: 0, deltaMode: 0 }, 720, 0), null);
+  assert.equal(getWheelSceneInput({ deltaX: 0, deltaY: 40, deltaMode: 0, ctrlKey: true }, 720), null);
+  assert.equal(getWheelSceneInput({ deltaX: 0, deltaY: 40, deltaMode: 0, metaKey: true }, 720), null);
+  assert.equal(getWheelSceneInput({ deltaX: 0, deltaY: 0, deltaMode: 0 }, 720), null);
 });
 
 test("narrow screens and reduced motion do not create invalid geometry", () => {
@@ -133,4 +133,50 @@ test("desktop exhibition dimensions retain the approved composition", () => {
   assert.equal(desktop.cardHeight, 215);
   assert.ok(Math.abs(desktop.radius - 397.6) < 1e-9);
   assert.equal(desktop.step, 147.6);
+});
+
+test("a wheel impulse starts gradually instead of jumping to its destination", () => {
+  const next = getDampedYaw(0, -30, 0, 1 / 60);
+  assert.ok(next.yaw < 0 && next.yaw > -3);
+  assert.ok(next.velocity < 0);
+  assert.equal(next.settled, false);
+});
+
+test("wheel damping approaches its destination without overshooting and comes to rest", () => {
+  let state = { yaw: 0, velocity: 0 };
+  for (let frame = 0; frame < 90; frame++) {
+    const next = getDampedYaw(state.yaw, -40, state.velocity, 1 / 60);
+    assert.ok(next.yaw <= state.yaw && next.yaw >= -40);
+    state = next;
+  }
+  assert.equal(state.yaw, -40);
+  assert.equal(state.velocity, 0);
+  assert.equal(state.settled, true);
+});
+
+test("wheel damping feels the same at 30, 60 and 120 frames per second", () => {
+  const samples = [30, 60, 120].map((fps) => {
+    let state = { yaw: 0, velocity: 0 };
+    for (let frame = 0; frame < fps / 5; frame++) state = getDampedYaw(state.yaw, 55, state.velocity, 1 / fps);
+    return state;
+  });
+  for (const sample of samples.slice(1)) {
+    assert.ok(Math.abs(sample.yaw - samples[0].yaw) < 1e-8);
+    assert.ok(Math.abs(sample.velocity - samples[0].velocity) < 1e-8);
+  }
+});
+
+test("changing the wheel destination preserves the current pose and then reverses smoothly", () => {
+  let state = getDampedYaw(0, -40, 0, 0.1);
+  const reversed = getDampedYaw(state.yaw, 30, state.velocity, 0);
+  assert.equal(reversed.yaw, state.yaw);
+  assert.equal(reversed.velocity, state.velocity);
+  for (let frame = 0; frame < 90; frame++) state = getDampedYaw(state.yaw, 30, state.velocity, 1 / 60);
+  assert.equal(state.yaw, 30);
+  assert.equal(state.settled, true);
+});
+
+test("wheel damping stops at the exhibition limits without residual velocity", () => {
+  assert.deepEqual(getDampedYaw(149, 500, 200, 0.25), { yaw: 150, velocity: 0, settled: true });
+  assert.deepEqual(getDampedYaw(-149, -500, -200, 0.25), { yaw: -150, velocity: 0, settled: true });
 });

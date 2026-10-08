@@ -14,15 +14,18 @@ const easeInOut = (value: number) => {
 };
 
 export function getGalleryGeometry(width: number, height: number) {
+  const mobile = width < 600;
   const cardWidth = Math.min(320, Math.max(205, width * 0.64));
+  const cardHeight = cardWidth * 215 / 320;
   return {
     width,
     height,
-    mobile: width < 600,
+    mobile,
     radius: Math.min(432, width * 0.355),
-    step: Math.min(170, height * 0.205),
+    // Narrow cylinders bring neighboring planes together; separate their vertical extents.
+    step: mobile ? cardHeight + 16 : Math.min(170, height * 0.205),
     cardWidth,
-    cardHeight: cardWidth * 215 / 320,
+    cardHeight,
   };
 }
 

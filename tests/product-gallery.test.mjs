@@ -90,3 +90,47 @@ test("narrow screens and reduced motion do not create invalid geometry", () => {
   }
   assert.equal(getTransitionProgress({ from: 0, to: 1, start: 0, duration: 0 }, 0), 1);
 });
+
+// Open cards only rotate around Y, so collisions need Y overlap and crossing XZ edges.
+function cardPlanesIntersect(a, b, geometry) {
+  const halfHeightA = geometry.cardHeight * a.scale / 2;
+  const halfHeightB = geometry.cardHeight * b.scale / 2;
+  if (Math.min(a.y + halfHeightA, b.y + halfHeightB) <= Math.max(a.y - halfHeightA, b.y - halfHeightB)) return false;
+
+  const edge = (pose) => {
+    const radians = pose.yaw * Math.PI / 180;
+    const dx = Math.cos(radians) * geometry.cardWidth * pose.scale / 2;
+    const dz = -Math.sin(radians) * geometry.cardWidth * pose.scale / 2;
+    return [{ x: pose.x - dx, z: pose.z - dz }, { x: pose.x + dx, z: pose.z + dz }];
+  };
+  const [a0, a1] = edge(a), [b0, b1] = edge(b);
+  const r = { x: a1.x - a0.x, z: a1.z - a0.z };
+  const s = { x: b1.x - b0.x, z: b1.z - b0.z };
+  const offset = { x: b0.x - a0.x, z: b0.z - a0.z };
+  const cross = (u, v) => u.x * v.z - u.z * v.x;
+  const denominator = cross(r, s);
+  if (Math.abs(denominator) < 1e-6) return false;
+  const t = cross(offset, s) / denominator, u = cross(offset, r) / denominator;
+  return t > 0 && t < 1 && u > 0 && u < 1;
+}
+
+test("mobile cards do not intersect each other across the drag rotation range", () => {
+  for (const width of [272, 327, 345, 382, 552]) {
+    const geometry = getGalleryGeometry(width, 600);
+    for (let yaw = -150; yaw <= 150; yaw += 15) {
+      for (const pan of [-geometry.step, 0, geometry.step]) {
+        const poses = [0, 1, 2].map((slot) => getGalleryCardPose(slot, geometry, 1, { yaw, pan }));
+        for (const [a, b] of [[0, 1], [1, 2], [0, 2]]) {
+          assert.equal(cardPlanesIntersect(poses[a], poses[b], geometry), false, `Cards ${a} and ${b} intersect at width ${width}, yaw ${yaw}, pan ${pan}`);
+        }
+      }
+    }
+  }
+});
+
+test("desktop exhibition dimensions retain the approved composition", () => {
+  assert.equal(desktop.cardWidth, 320);
+  assert.equal(desktop.cardHeight, 215);
+  assert.ok(Math.abs(desktop.radius - 397.6) < 1e-9);
+  assert.equal(desktop.step, 147.6);
+});

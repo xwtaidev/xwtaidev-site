@@ -1,14 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
 import { profile } from "@/content/site";
 import { Icon } from "./icon";
 import { ThemeButton } from "./theme-button";
 import { Tooltip } from "./tooltip";
 
-export function SiteFooter() {
+export function SiteFooter({ showTheme = true, showHome = false }: { showTheme?: boolean; showHome?: boolean }) {
+  const signature = <Image className="signature" src="/assets/signature-xwt.png" alt={profile.signature} width={64} height={25} sizes="64px" />;
   return (
     <footer className="footer">
-      <Image className="signature" src="/assets/signature-xwt.png" alt={profile.signature} width={64} height={25} sizes="64px" />
-      <nav className="footer-links" aria-label="Elsewhere and appearance">
+      {showHome ? <Link className="footer-home" href="/" aria-label="Back to home">{signature}<span>Home</span></Link> : signature}
+      <nav className="footer-links" aria-label={showTheme ? "Elsewhere and appearance" : "Elsewhere"}>
         <Tooltip id="github-hint" content="GitHub">
           <a className="icon-button t-tt-trigger" href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="Visit GitHub, opens in a new tab" aria-describedby="github-hint">
             <Icon name="github" className="footer-icon social-icon" />
@@ -24,8 +26,7 @@ export function SiteFooter() {
             <Image className="gmail-icon" src="/assets/icons/gmail.svg" alt="" width={16} height={16} sizes="16px" />
           </a>
         </Tooltip>
-        <span className="footer-divider" aria-hidden="true" />
-        <ThemeButton />
+        {showTheme && <><span className="footer-divider" aria-hidden="true" /><ThemeButton /></>}
       </nav>
     </footer>
   );

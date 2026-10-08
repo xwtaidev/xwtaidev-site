@@ -77,6 +77,7 @@ export function OrbitNavigation({ currentPage }: { currentPage?: "blog" | "produ
     positionOrbit();
     const observer = new ResizeObserver(positionOrbit);
     observer.observe(root);
+    observer.observe(panel);
     return () => observer.disconnect();
   }, []);
 

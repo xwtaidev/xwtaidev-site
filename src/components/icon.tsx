@@ -10,6 +10,7 @@ const paths = {
   moon: "moon",
   close: "x",
   external: "arrow-up-right",
+  back: "arrow-right",
   board: "kanban",
   calendar: "calendar-blank",
   workspace: "stack-simple",

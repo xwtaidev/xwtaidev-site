@@ -11,6 +11,7 @@ import { useProductGalleryStore } from "./product-gallery-provider";
 import { ThemeButton } from "./theme-button";
 
 const slots = products.map((product) => product.slot);
+const cardSides = ["front", "back"] as const;
 
 export function ProductGallery() {
   const store = useProductGalleryStore();
@@ -58,12 +59,16 @@ export function ProductGallery() {
               data-product={product.id}
               draggable={false}
             >
-              <Image className="product-gallery-cover" src={product.cover} alt={product.coverAlt} width={1000} height={667} sizes="(max-width: 600px) 320px, 520px" loading="eager" draggable={false} />
-              <span className="product-gallery-shade" aria-hidden="true" />
-              <span className="product-gallery-wordmark" aria-hidden="true">
-                <Icon name={product.icon} className="product-wordmark-icon" />
-                <span>{details[product.id].title}<small>{product.label}</small></span>
-              </span>
+              {cardSides.map((side) => (
+                <span className={`product-gallery-face product-gallery-face-${side}`} key={side} aria-hidden={side === "back" ? true : undefined}>
+                  <Image className="product-gallery-cover" src={product.cover} alt={side === "front" ? product.coverAlt : ""} width={1000} height={667} sizes="(max-width: 600px) 320px, 520px" loading="eager" draggable={false} />
+                  <span className="product-gallery-shade" aria-hidden="true" />
+                  <span className="product-gallery-wordmark" aria-hidden="true">
+                    <Icon name={product.icon} className="product-wordmark-icon" />
+                    <span>{details[product.id].title}<small>{product.label}</small></span>
+                  </span>
+                </span>
+              ))}
             </Link>
           ))}
         </div>

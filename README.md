@@ -4,7 +4,7 @@ A developer and independent maker website built with Next.js, React, TypeScript 
 
 ## Development
 
-Use Node.js 22, then run:
+Use Node.js 22 and npm 10 to match the Cloudflare build environment, then run:
 
 ```sh
 npm ci
@@ -12,6 +12,8 @@ npm run dev
 ```
 
 The local site runs at http://127.0.0.1:4173.
+
+After changing dependencies, commit both `package.json` and `package-lock.json`. Run `npm ci` with npm 10 before building to verify that a clean installation succeeds.
 
 ## Build and preview
 

@@ -1,7 +1,10 @@
 @import "tailwindcss";
+@import "./wenkai.css";
 
 :root {
   color-scheme: light;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-reading-zh: "LXGW WenKai Screen", var(--font-sans);
   --page-bg: #fff;
   --text: #6b6b6b;
   --text-strong: #242424;
@@ -81,7 +84,7 @@ body {
   margin: 0;
   background: var(--page-bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14.4px;
   font-weight: 400;
   line-height: 1.6;
@@ -131,37 +134,42 @@ html[data-theme="dark"] .avatar-dark { display: block; }
 .product-detail-link:hover { color: var(--accent); }
 .introduction { display: flex; flex-direction: column; gap: 38px; }
 .introduction p { margin: 0; }
+html:lang(zh-CN) .introduction,
+html:lang(zh-CN) .dialog-copy > p:not(.project-reference) {
+  font-family: var(--font-reading-zh);
+  font-size: 15.5px;
+  line-height: 1.8;
+}
 .intro-lead { color: var(--text-strong); }
 .tech-term { display: inline-flex; align-items: baseline; gap: 4px; color: var(--text-strong); white-space: nowrap; }
 .tech-term-icon { align-self: center; flex-shrink: 0; width: 14px; height: 14px; object-fit: contain; }
 .tech-term-icon-monochrome { filter: var(--icon-filter); }
-.name-reveal { display: inline-block; }
+.name-sweep { display: inline-block; color: var(--text-strong); }
 @supports ((background-clip: text) or (-webkit-background-clip: text)) {
-  .name-reveal {
+  .name-sweep {
     color: transparent;
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
     background-repeat: no-repeat;
     background-size: 300% 100%;
-    /* At 3× text width, this band covers 34% of the name.
-       The solid section follows the band; the leading section is transparent. */
+    /* Keep both sides opaque so the full name stays visible during the sweep. */
     background-image: linear-gradient(
       90deg,
-      var(--text-strong) 50%,
+      var(--text-strong) 46%,
       var(--name-sweep-1) 50%,
       var(--name-sweep-2) 52.833333%,
       var(--name-sweep-3) 55.666667%,
       var(--name-sweep-4) 58.5%,
       var(--name-sweep-5) 61.333333%,
-      transparent 61.333333%
+      var(--text-strong) 65.333333%
     );
-    animation: name-reveal var(--intro-reveal-duration) var(--intro-reveal-ease) var(--intro-reveal-delay) 1 both;
+    animation: name-sweep var(--intro-reveal-duration) linear var(--intro-reveal-delay) 1 both;
   }
 }
-@keyframes name-reveal {
-  from { background-position: 92% 0; }
-  to { background-position: 25% 0; }
+@keyframes name-sweep {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
 }
 .text-link { --link-color: var(--accent); color: var(--link-color); text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--link-color) 46%, transparent); transition: text-decoration-color 150ms ease; }
 .text-link[data-link="github"] { --link-color: var(--note-color); }
@@ -221,6 +229,11 @@ html[data-theme="dark"] .avatar-dark { display: block; }
 .social-icon { opacity: 0.75; }
 .icon-button:hover .social-icon { opacity: 1; }
 .footer-divider { height: 12px; width: 1px; margin: 0 4px; background: var(--line); }
+.site-preferences { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.site-preferences > .t-tt-wrap { display: flex; align-items: center; line-height: 0; }
+.language-toggle { font-size: 12px; font-weight: 500; line-height: 1; }
+.language-toggle > span { opacity: 0.75; }
+.language-toggle:hover > span { opacity: 1; }
 .theme-toggle { display: inline-grid; place-items: center; }
 .theme-toggle .icon-mask { grid-area: 1 / 1; width: 16px; height: 16px; transition: opacity 180ms ease, transform 180ms ease; }
 .theme-sun, .theme-moon { color: var(--text-strong); opacity: 0.75; }
@@ -347,7 +360,8 @@ html[data-theme="dark"] .theme-moon { opacity: 0.75 !important; transform: rotat
   .orbit-node { min-height: 44px; }
   .introduction { gap: 32px; }
   .footer { margin-top: 34px; padding-top: 24px; }
-  .footer-links { gap: 8px; }
+  .footer-links, .site-preferences { gap: 2px; }
+  .footer-home > span { display: none; }
   .icon-button { width: 34px; height: 34px; }
   .chip { font-size: 14px; }
   .t-tt { display: none; }
@@ -361,7 +375,7 @@ html[data-theme="dark"] .theme-moon { opacity: 0.75 !important; transform: rotat
   .orbit-node { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .name-reveal { animation: none; background-image: none; color: var(--text-strong); -webkit-text-fill-color: var(--text-strong); }
+  .name-sweep { animation: none; background-image: none; color: var(--text-strong); -webkit-text-fill-color: var(--text-strong); }
   .underline-reveal::after { animation: none; transform: scaleX(1); }
   .chip::before { animation: none; transform: scaleX(1); }
   .t-tt { transition: none !important; }

@@ -2,7 +2,6 @@ import type { DetailKey } from "./site";
 
 type Product = {
   id: Exclude<DetailKey, "about">;
-  slug: string;
   cover: string;
   coverAlt: string;
   label: string;
@@ -12,15 +11,15 @@ type Product = {
 
 export const products = [
   {
-    id: "lattice", slug: "lattice-board", cover: "/assets/products/lattice-board.jpg",
-    coverAlt: "Ivory note cards arranged in an architectural lattice", label: "Obsidian plugin", slot: 1, icon: "board",
+    id: "lattice", cover: "/assets/products/lattice-board-editorial.webp",
+    coverAlt: "Three task lanes with ivory paper cards and status markers on a sage board", label: "Obsidian plugin", slot: 1, icon: "board",
   },
   {
-    id: "weekly", slug: "weekly-schedule", cover: "/assets/products/weekly-schedule.jpg",
-    coverAlt: "An open weekly planner on a graphite desk", label: "Obsidian plugin", slot: 0, icon: "calendar",
+    id: "weekly", cover: "/assets/products/weekly-schedule-editorial.webp",
+    coverAlt: "An open weekly planner with task slips and a four-quadrant priority insert", label: "Obsidian plugin", slot: 0, icon: "calendar",
   },
   {
-    id: "vibespace", slug: "vibespace", cover: "/assets/products/vibespace.jpg",
-    coverAlt: "Smoked-glass workspace planes and silver task tiles", label: "AI workspace", slot: 2, icon: "workspace",
+    id: "vibespace", cover: "/assets/products/vibespace-editorial.webp",
+    coverAlt: "Smoked-glass panels, execution tools, and a reviewed document", label: "Local-first AI agent", slot: 2, icon: "workspace",
   },
 ] as const satisfies readonly Product[];

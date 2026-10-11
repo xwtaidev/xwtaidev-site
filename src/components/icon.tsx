@@ -17,6 +17,9 @@ const paths = {
   orbitAbout: "orbit-user",
   orbitBlog: "orbit-notebook",
   orbitProducts: "orbit-flask",
+  search: "magnifying-glass",
+  copy: "copy",
+  check: "check",
 } as const;
 
 export function Icon({ name, className = "" }: { name: keyof typeof paths; className?: string }) {

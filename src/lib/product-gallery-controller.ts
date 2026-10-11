@@ -24,10 +24,14 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   const folder = query<HTMLButtonElement>(".product-folder");
   const flap = query<HTMLSpanElement>(".product-folder-flap");
   const floor = query<HTMLDivElement>(".product-folder-floor");
-  const dragHint = query<HTMLSpanElement>(".product-gallery-hint");
   const enter = query<HTMLSpanElement>(".product-gallery-enter");
   const close = query<HTMLButtonElement>(".product-gallery-close");
-  const cards = Array.from(root.querySelectorAll<HTMLAnchorElement>(".product-gallery-card"));
+  const cards = Array.from(root.querySelectorAll<HTMLElement>(".product-gallery-card"));
+  const statuses = new Map(cards.flatMap((card) => {
+    const id = card.getAttribute("aria-describedby");
+    const tooltip = id ? document.getElementById(id) : null;
+    return tooltip ? [[card, tooltip] as const] : [];
+  }));
   const papers = Array.from(root.querySelectorAll<HTMLSpanElement>(".product-folder-paper"));
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   const saved = store.getSnapshot();
@@ -43,6 +47,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   let geometry = getGalleryGeometry(0, 0);
   let frame = 0, lastFrame = 0, blockedUntil = 0, saveAfterMotion = false, disposed = false;
   let drag: { id: number; x: number; y: number; yaw: number; pan: number; moved: boolean; lastX: number; lastTime: number } | null = null;
+  let statusCard: HTMLElement | null = null;
   const cleanup: (() => void)[] = [];
   const easeOut = (value: number) => 1 - Math.pow(1 - clamp(value, 0, 1), 3);
   const easeInOut = (value: number) => {
@@ -58,6 +63,17 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   function persist() { store.update({ phase, ...scene }); }
   function setPhase(next: GalleryPhase) { phase = next; root.dataset.phase = next; persist(); }
 
+  function showStatus(card: HTMLElement | null) {
+    statusCard = card && statuses.has(card) ? card : null;
+    statuses.forEach((tooltip, owner) => tooltip.classList.toggle("is-active", owner === statusCard));
+    if (!statusCard) return;
+    const tooltip = statuses.get(statusCard)!;
+    const bounds = statusCard.getBoundingClientRect();
+    const stageBounds = stage.getBoundingClientRect();
+    tooltip.style.left = `${bounds.left + bounds.width / 2 - stageBounds.left}px`;
+    tooltip.style.top = `${bounds.top - stageBounds.top - 8}px`;
+  }
+
   function measure() {
     if (disposed || !root.isConnected || !stage.clientWidth) return;
     geometry = getGalleryGeometry(stage.clientWidth, stage.clientHeight);
@@ -68,6 +84,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
       });
     });
     paint();
+    if (statusCard) showStatus(statusCard);
   }
 
   function paint() {
@@ -95,7 +112,6 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
       card.style.opacity = String(pose.opacity);
       card.setAttribute("aria-current", scene.selected === index ? "true" : "false");
     });
-    dragHint.style.opacity = String(clamp((p - 0.91) / 0.09, 0, 1));
   }
 
   function updateSelection() {
@@ -110,6 +126,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   function centerCard(index: number) {
     const slot = slots[index];
     if (slot === undefined) return;
+    showStatus(null);
     scene.yaw = -(slot - 1) * 45;
     scene.pan = -(slot - 1) * geometry.step;
     scene.selected = index;
@@ -162,6 +179,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   }
 
   function changeOpen(open: boolean) {
+    showStatus(null);
     enter.classList.remove("is-active");
     motion.velocity = 0; motion.wheel = null; motion.hoverTarget = 0; saveAfterMotion = false;
     root.classList.remove("is-folder-hover");
@@ -193,6 +211,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
 
   function beginDrag(event: PointerEvent) {
     if (drag || phase !== "open" || event.button !== 0 || (event.target as Element).closest(".product-folder-hit")) return;
+    showStatus(null);
     drag = { id: event.pointerId, x: event.clientX, y: event.clientY, yaw: scene.yaw, pan: scene.pan, moved: false, lastX: event.clientX, lastTime: performance.now() };
     motion.velocity = 0;
     motion.wheel = null;
@@ -201,8 +220,10 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   function track(event: PointerEvent) {
     if (drag && event.pointerType === "mouse" && event.buttons === 0) { drag = null; motion.velocity = 0; return; }
     if (!drag) {
-      const card = (event.target as Element).closest(".product-gallery-card");
-      if (card && phase === "open" && event.pointerType !== "touch" && !reduced.matches) {
+      const card = (event.target as Element).closest<HTMLElement>(".product-gallery-card");
+      const hovering = phase === "open" && event.pointerType !== "touch";
+      showStatus(hovering && card && !motion.wheel && Math.abs(motion.velocity) <= 0.12 ? card : null);
+      if (card?.matches("a[href]") && hovering && !reduced.matches) {
         const bounds = stage.getBoundingClientRect();
         enter.style.transform = `translate3d(${event.clientX - bounds.left - 23.5}px,${event.clientY - bounds.top - 23.5}px,0)`;
         enter.classList.add("is-active");
@@ -228,6 +249,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
     const moved = drag.moved; drag = null;
     try { stage.releasePointerCapture(event.pointerId); } catch {}
     if (moved) { blockedUntil = performance.now() + 350; saveAfterMotion = true; animate(); }
+    else if (event.pointerType !== "touch") showStatus((event.target as Element).closest<HTMLElement>(".product-gallery-card"));
   }
 
   listen(folder, "click", () => changeOpen(phase === "closed" || phase === "closing"));
@@ -248,12 +270,13 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
   listen(stage, "pointermove", track);
   listen(stage, "pointerup", finishDrag);
   listen(stage, "pointercancel", finishDrag);
-  listen(stage, "pointerleave", () => enter.classList.remove("is-active"));
+  listen(stage, "pointerleave", () => { enter.classList.remove("is-active"); showStatus(null); });
   listen(stage, "dragstart", (event) => event.preventDefault());
   listen(stage, "wheel", (event) => {
     if (phase !== "open" || drag) return;
     const input = getWheelSceneInput(event, geometry.height);
     if (!input) return;
+    showStatus(null);
     event.preventDefault(); enter.classList.remove("is-active");
     blockedUntil = performance.now() + 120;
     const target = clamp((motion.wheel?.target ?? scene.yaw) + input.yawDelta, -150, 150);
@@ -269,7 +292,7 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
     }
   }, { passive: false });
   listen(field, "click", (event) => {
-    const card = (event.target as Element).closest<HTMLAnchorElement>(".product-gallery-card");
+    const card = (event.target as Element).closest<HTMLAnchorElement>("a.product-gallery-card[href]");
     if (!card) return;
     if (phase !== "open" || (event.detail > 0 && performance.now() < blockedUntil)) {
       event.preventDefault(); event.stopPropagation(); return;
@@ -279,9 +302,13 @@ export function setupProductGallery(root: HTMLElement, store: ProductGalleryStor
     scene.selected = index; motion.velocity = 0; motion.wheel = null; saveAfterMotion = false; persist();
   }, { capture: true });
   listen(field, "focusin", (event) => {
-    const card = (event.target as Element).closest<HTMLAnchorElement>(".product-gallery-card");
-    if (phase === "open" && card?.matches(":focus-visible")) centerCard(cards.indexOf(card));
+    const card = (event.target as Element).closest<HTMLElement>(".product-gallery-card");
+    if (phase === "open" && card?.matches(":focus-visible")) {
+      centerCard(cards.indexOf(card));
+      showStatus(card);
+    }
   });
+  listen(field, "focusout", () => showStatus(null));
   listen(root, "keydown", (event) => {
     if (event.defaultPrevented || root.querySelector('.orbit-navigation[data-open="true"]')) return;
     if (event.key === "Escape" && phase !== "closed") { event.preventDefault(); changeOpen(false); }

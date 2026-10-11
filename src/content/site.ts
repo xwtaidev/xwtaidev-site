@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n";
+
 export const profile = {
   name: "xwtaidev",
   signature: "xwt",
@@ -64,3 +66,47 @@ export const details: Record<DetailKey, DetailContent> = {
 };
 
 export type DetailKey = "about" | "lattice" | "weekly" | "vibespace";
+
+const detailsZh: Record<DetailKey, DetailContent> = {
+  about: {
+    ...details.about,
+    eyebrow: "关于我",
+    title: "认真做好每一件小事。",
+    paragraphs: [
+      "我的工作涵盖 AI 工具、Obsidian 插件和桌面应用。我通常从自己的需求出发，围绕它构建一个小工具。",
+      "我关注智能体工作流、工具集成和记忆系统，也使用 Python 和 Java 进行后端开发。Web 开发主要使用 TypeScript、React 和 Next.js；桌面应用则使用 Tauri 和 Rust。",
+      "其他项目包括早期的 Mac 磁盘空间分析工具 FileSniffer，以及统计本地 AI Token 用量和费用的仪表盘 TokenPulse。",
+    ],
+    links: details.about.links?.map((link) => ({ ...link, label: "在 GitHub 上查看我的项目" })),
+  },
+  lattice: {
+    ...details.lattice,
+    eyebrow: "Obsidian 插件",
+    paragraphs: [
+      "以看板形式查看笔记。每一列对应一个笔记属性，移动卡片即可更新该属性。",
+      "基于 Obsidian Bases 构建，看板保存在 .base 文件中，笔记始终留在你的笔记库里。",
+    ],
+    links: details.lattice.links?.map((link, index) => ({ ...link, label: index === 0 ? "安装 Obsidian 插件" : "查看 GitHub 源码" })),
+  },
+  weekly: {
+    ...details.weekly,
+    eyebrow: "Obsidian 插件",
+    paragraphs: [
+      "在 Obsidian 中规划和回顾每一周。通过每日优先级四象限整理任务，用年度概览回顾过去。",
+      "任务以普通 Markdown 文件保存在笔记库中。插件支持离线使用，并跟随你的 Obsidian 主题。",
+    ],
+    links: details.weekly.links?.map((link, index) => ({ ...link, label: index === 0 ? "安装 Obsidian 插件" : "查看 GitHub 源码" })),
+  },
+  vibespace: {
+    ...details.vibespace,
+    eyebrow: "开发中",
+    paragraphs: [
+      "一个本地优先的 macOS AI 工作空间，探索如何结合智能体与任务看板，让想法逐步成为现实。",
+      "目前仍在开发中，尚未公开发布。",
+    ],
+  },
+};
+
+export function getDetails(locale: Locale) {
+  return locale === "zh-CN" ? detailsZh : details;
+}

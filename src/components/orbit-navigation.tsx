@@ -8,11 +8,13 @@ import { getOrbitLayout } from "@/lib/orbit-layout";
 import { themeAvatars } from "@/lib/theme";
 import { Icon } from "./icon";
 import { useSite } from "./site-provider";
+import { useLocale } from "./locale-provider";
 
 type Phase = "closed" | "open" | "closing";
 
 export function OrbitNavigation({ currentPage }: { currentPage?: "blog" | "products" }) {
   const { openDetails } = useSite();
+  const { messages } = useLocale();
   const [phase, setPhase] = useState<Phase>("closed");
   const phaseRef = useRef<Phase>("closed");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -112,35 +114,35 @@ export function OrbitNavigation({ currentPage }: { currentPage?: "blog" | "produ
         ref={triggerRef}
         className="orbit-trigger"
         type="button"
-        aria-label="Explore navigation"
+        aria-label={messages.navigation.exploreLabel}
         aria-expanded={open}
         aria-controls={panelId}
         onClick={toggleNavigation}
       >
         <span className="orbit-photo">
-          <Image className="identity-avatar avatar-light" src={themeAvatars.light} alt={`Portrait of ${profile.name}`} width={40} height={40} sizes="40px" priority />
-          <Image className="identity-avatar avatar-dark" src={themeAvatars.dark} alt={`Portrait of ${profile.name}`} width={40} height={40} sizes="40px" priority />
+          <Image className="identity-avatar avatar-light" src={themeAvatars.light} alt={`${messages.navigation.portrait} ${profile.name}`} width={40} height={40} sizes="40px" priority />
+          <Image className="identity-avatar avatar-dark" src={themeAvatars.dark} alt={`${messages.navigation.portrait} ${profile.name}`} width={40} height={40} sizes="40px" priority />
           <span className="orbit-mark" aria-hidden="true">+</span>
         </span>
-        <span className="orbit-label">Explore</span>
+        <span className="orbit-label">{messages.navigation.explore}</span>
       </button>
       <nav
         ref={panelRef}
         id={panelId}
         className={`orbit-panel t-dropdown${open ? " is-open" : phase === "closing" ? " is-closing" : ""}`}
-        aria-label="Site navigation"
+        aria-label={messages.navigation.site}
         aria-hidden={!open}
         inert={!open}
       >
         <span className="orbit-track" aria-hidden="true" />
         <button className="orbit-node" data-orbit-node="about" type="button" onClick={() => { closeNavigation(true); openDetails("about"); }}>
-          <Icon name="orbitAbout" className="orbit-icon" /><span>About me</span>
+          <Icon name="orbitAbout" className="orbit-icon" /><span>{messages.navigation.about}</span>
         </button>
         <Link className="orbit-node" data-orbit-node="blog" href="/blog" aria-current={currentPage === "blog" ? "page" : undefined} onClick={() => closeNavigation(true)}>
-          <Icon name="orbitBlog" className="orbit-icon" /><span>Blog</span>
+          <Icon name="orbitBlog" className="orbit-icon" /><span>{messages.navigation.blog}</span>
         </Link>
         <Link className="orbit-node" data-orbit-node="products" href="/products" aria-current={currentPage === "products" ? "page" : undefined} onClick={() => closeNavigation(true)}>
-          <Icon name="orbitProducts" className="orbit-icon" /><span>Products</span>
+          <Icon name="orbitProducts" className="orbit-icon" /><span>{messages.navigation.products}</span>
         </Link>
       </nav>
     </div>

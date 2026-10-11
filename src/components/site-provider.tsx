@@ -11,9 +11,10 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { details, type DetailKey } from "@/content/site";
+import { getDetails, type DetailKey } from "@/content/site";
 import { getServerTheme, getTheme, subscribeTheme, toggleTheme, type Theme } from "@/lib/theme";
 import { Icon } from "./icon";
+import { useLocale } from "./locale-provider";
 
 type SiteContextValue = {
   theme: Theme;
@@ -30,11 +31,12 @@ export function useSite() {
 }
 
 export function SiteProvider({ children }: { children: ReactNode }) {
+  const { locale, messages } = useLocale();
   const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
   const [selected, setSelected] = useState<DetailKey | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const view = selected ? details[selected] : null;
+  const view = selected ? getDetails(locale)[selected] : null;
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -87,7 +89,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
         onCancel={(event) => { event.preventDefault(); closeDetails(); }}
         onClick={closeOnBackdrop}
       >
-        <button className="dialog-close icon-button" type="button" aria-label="Close details" onClick={closeDetails}>
+        <button className="dialog-close icon-button" type="button" aria-label={messages.closeDetails} onClick={closeDetails}>
           <Icon name="close" className="dialog-close-icon" />
         </button>
         <div className="dialog-content">

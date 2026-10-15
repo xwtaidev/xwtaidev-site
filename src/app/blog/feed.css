@@ -38,7 +38,6 @@
 .feed-search .icon-mask { width: 14px; height: 14px; }
 .feed-search input { width: 150px; min-height: 38px; padding: 4px 0; border: 0; border-radius: 0; outline: none; color: var(--text-strong); background: transparent; font: inherit; font-size: 11px; }
 .feed-search input::placeholder { color: var(--feed-muted); }
-.feed-search:focus-within { outline: 1px solid var(--accent); outline-offset: 5px; border-radius: 3px; }
 .feed-grid { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: 24px; padding: 0; margin: 0; list-style: none; }
 .feed-grid[data-layout="ready"] { display: block; }
 .feed-grid[data-layout="ready"] > li { position: absolute; top: 0; left: 0; }

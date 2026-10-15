@@ -78,7 +78,10 @@ html[data-theme="dark"] {
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { min-height: 100%; }
+html { min-height: 100%; scrollbar-gutter: stable; }
+@supports not (scrollbar-gutter: stable) {
+  html { overflow-y: scroll; }
+}
 body {
   @apply min-h-dvh flex flex-col;
   margin: 0;

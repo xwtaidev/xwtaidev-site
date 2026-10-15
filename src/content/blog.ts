@@ -9,6 +9,7 @@ export type BlogPost = {
   slug: string;
   title: string;
   description: string;
+  author: string;
   date: string;
   category: BlogCategory;
   tags: readonly string[];

@@ -43,6 +43,7 @@ Start with YAML frontmatter, then write ordinary Markdown:
 ---
 title: "My first post"
 description: "What I learned while making a small tool."
+author: "xwtaidev"
 date: "2026-10-11"
 category: "Building"
 tags: ["Independent work", "Learning"]
@@ -65,14 +66,15 @@ Subheadings appear in the reading navigation automatically.
 Leave the reader with something concrete to think about or try.
 ```
 
-The page title comes from `title`; start body sections with `##` and use `###` for subsections. The table of contents, heading anchors, reading time, cards, category filters, and related articles are generated from the files. Write the public article content in English, matching the rest of the site.
+The page title comes from `title`; start body sections with `##` and use `###` for subsections. The table of contents, heading anchors, reading time, cards, category filters, and previous/next article links are generated from the files. Previous links to the nearest older article and next to the nearest newer article, across all categories. Articles with the same date follow the collection's filename order; navigation stops at either end. Write the public article content in English, matching the rest of the site.
 
 ### Frontmatter fields
 
 | Field | Required | Meaning |
 | --- | --- | --- |
 | `title` | Yes | Article heading and card title. |
-| `description` | Yes | Card summary and search description. |
+| `description` | No | Optional article summary. Leave blank or omit to hide it on cards and article pages; search/social metadata falls back to the article title. |
+| `author` | No | Author name shown in the article byline and search/social metadata. Leave blank or omit to use the site's profile name. |
 | `date` | Yes | Publication date as a quoted `YYYY-MM-DD` string; newest dates appear first. |
 | `category` | Yes | A topic such as `Building`, `Engineering`, or `Notes`. New topic names appear in the filters automatically. |
 | `tags` | No | A YAML list of strings; defaults to an empty list. |
@@ -85,6 +87,8 @@ The page title comes from `title`; start body sections with `##` and use `###` f
 | `sample` | No | Marks mock content as a sample. Defaults to `false`; migrated mock articles keep `sample: true`. |
 
 Files beginning with `_`, including `_template.md`, are never articles. Published files require valid metadata and a non-empty body. A correctly marked draft can remain unfinished without breaking a production build. The date controls display and sorting; it does not schedule a future deployment.
+
+The original design samples are archived in `content/blog/_samples/`. Blog loading only reads Markdown files directly inside `content/blog/`, so archived samples do not appear in lists, previous/next navigation, or exported article pages. You can copy an archived file back into `content/blog/` to reuse it, then update its content and set `sample: false`.
 
 ### Markdown features and images
 

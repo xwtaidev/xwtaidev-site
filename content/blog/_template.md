@@ -1,6 +1,7 @@
 ---
 title: "Your article title"
-description: "A short summary for the article card and search results."
+description: ""
+author: ""
 date: "2026-10-11"
 category: "Notes"
 tags: []

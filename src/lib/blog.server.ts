@@ -3,12 +3,13 @@ import { readFileSync, readdirSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { parseDocument } from "yaml";
 import { blogCoverKinds, type BlogPost, type BlogPostPreview } from "../content/blog.ts";
+import { profile } from "../content/site.ts";
 import { compileMarkdown } from "./markdown.ts";
 
 type BlogOptions = { directory?: string; includeDrafts?: boolean };
 const defaultDirectory = join(process.cwd(), "content", "blog");
 const parsedFiles = new Map<string, { source: string; post: BlogPost | undefined }>();
-const allowedFields = new Set(["title", "description", "date", "category", "tags", "cover", "coverImage", "coverAlt", "format", "pullQuote", "draft", "sample"]);
+const allowedFields = new Set(["title", "description", "author", "date", "category", "tags", "cover", "coverImage", "coverAlt", "format", "pullQuote", "draft", "sample"]);
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function parsePost(source: string, filename: string, includeDrafts: boolean): BlogPost | undefined {
@@ -34,6 +35,11 @@ function parsePost(source: string, filename: string, includeDrafts: boolean): Bl
       if (typeof value !== "boolean") throw new Error(`"${key}" must be true or false, without quotes.`);
       return value;
     }
+    function optionalTextField(key: string) {
+      const value = metadata[key];
+      if (value != null && typeof value !== "string") throw new Error(`"${key}" must be a string or left empty.`);
+      return value?.trim() ?? "";
+    }
 
     const draft = booleanField("draft");
     if (draft && !includeDrafts) return undefined;
@@ -42,7 +48,8 @@ function parsePost(source: string, filename: string, includeDrafts: boolean): Bl
     const slug = basename(filename, ".md");
     if (!slugPattern.test(slug)) throw new Error("Use a lowercase, hyphen-separated filename such as my-first-post.md.");
     const title = stringField("title", true)!;
-    const description = stringField("description", true)!;
+    const description = optionalTextField("description");
+    const author = optionalTextField("author") || profile.name;
     const date = stringField("date", true)!;
     const parsedDate = new Date(`${date}T00:00:00Z`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== date) throw new Error('"date" must be a real calendar date in YYYY-MM-DD format.');
@@ -62,7 +69,7 @@ function parsePost(source: string, filename: string, includeDrafts: boolean): Bl
     if (!body && !draft) throw new Error("The article body cannot be empty.");
     const compiled = compileMarkdown(body);
     return {
-      slug, title, description, date, category, tags: tags.map((tag) => tag.trim()),
+      slug, title, description, author, date, category, tags: tags.map((tag) => tag.trim()),
       cover: cover as BlogPost["cover"], coverImage, coverAlt: stringField("coverAlt"), format: format as BlogPost["format"], pullQuote,
       draft, sample: booleanField("sample"),
       html: compiled.html, headings: compiled.headings, hasIntroduction: compiled.hasIntroduction,
@@ -91,7 +98,7 @@ export function getBlogPosts({ directory = defaultDirectory, includeDrafts = pro
 
 export function getBlogPostPreviews(options?: BlogOptions): readonly BlogPostPreview[] {
   return getBlogPosts(options).map((post) => ({
-    slug: post.slug, title: post.title, description: post.description, date: post.date, category: post.category, tags: post.tags,
+    slug: post.slug, title: post.title, description: post.description, author: post.author, date: post.date, category: post.category, tags: post.tags,
     cover: post.cover, coverImage: post.coverImage, coverAlt: post.coverAlt, format: post.format, pullQuote: post.pullQuote,
     draft: post.draft, sample: post.sample, readingMinutes: post.readingMinutes,
   }));
@@ -102,6 +109,9 @@ export function getPostBySlug(slug: string, options?: BlogOptions) {
   return getBlogPosts(options).find((post) => post.slug === slug);
 }
 
-export function getRelatedPosts(post: BlogPost, options?: BlogOptions) {
-  return getBlogPosts(options).filter((entry) => entry.slug !== post.slug).sort((a, b) => Number(b.category === post.category) - Number(a.category === post.category)).slice(0, 2);
+export function getAdjacentPosts(slug: string, options?: BlogOptions): { previous?: BlogPostPreview; next?: BlogPostPreview } {
+  const posts = getBlogPostPreviews(options);
+  const index = posts.findIndex((post) => post.slug === slug);
+  if (index < 0) return { previous: undefined, next: undefined };
+  return { previous: posts[index + 1], next: posts[index - 1] };
 }

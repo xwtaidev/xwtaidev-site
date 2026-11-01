@@ -26,6 +26,15 @@ const en = {
   theme: { light: "Switch to light theme", dark: "Switch to dark theme" },
   language: { switch: "Switch to Simplified Chinese" },
   closeDetails: "Close details",
+  contributions: {
+    title: "A year of making",
+    link: "View on GitHub",
+    loading: "Loading GitHub activity…",
+    unavailable: "GitHub activity is currently unavailable.",
+    summary: "GitHub contributions over the past year",
+    pastYear: "Contributions over the past year",
+    count: "{count} contributions on {date}",
+  },
   home: {
     skip: "Skip to introduction",
     introduction: "Introduction",
@@ -186,6 +195,15 @@ const zh: Messages = {
   theme: { light: "切换为浅色主题", dark: "切换为深色主题" },
   language: { switch: "切换为 English" },
   closeDetails: "关闭详情",
+  contributions: {
+    title: "一年的创作足迹",
+    link: "查看 GitHub",
+    loading: "正在加载 GitHub 活动…",
+    unavailable: "暂时无法加载 GitHub 活动。",
+    summary: "过去一年的 GitHub 贡献",
+    pastYear: "过去一年的贡献",
+    count: "{date}：{count} 次贡献",
+  },
   home: {
     skip: "跳转到个人介绍",
     introduction: "个人介绍",

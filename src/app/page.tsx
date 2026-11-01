@@ -5,6 +5,7 @@ import { Icon } from "@/components/icon";
 import { OrbitNavigation } from "@/components/orbit-navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { TechTerm } from "@/components/tech-term";
+import { GitHubContributions } from "@/components/github-contributions";
 import { Tooltip } from "@/components/tooltip";
 import { profile } from "@/content/site";
 import { useLocale } from "@/components/locale-provider";
@@ -35,6 +36,7 @@ export default function HomePage() {
           <p>{copy.contactBefore}<a className="text-link underline-reveal" data-link="github" href={profile.github} target="_blank" rel="noopener noreferrer">GitHub</a>{copy.afterGithub}<a className="text-link underline-reveal" href={`mailto:${profile.email}`}>{copy.hello}</a>{copy.contactEnd}</p>
         </section>
 
+        <GitHubContributions />
         <SiteFooter />
       </main>
     </>

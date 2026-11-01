@@ -112,6 +112,8 @@ export function SiteProvider({ children }: { children: ReactNode }) {
                     <a href={link.href} target="_blank" rel="noopener noreferrer">
                       {link.icon === "obsidian" ? (
                         <Image className="project-link-icon" src="/assets/icons/obsidian.svg" alt="" width={16} height={16} />
+                      ) : link.icon === "workspace" ? (
+                        <Icon name="workspace" className="project-link-icon" />
                       ) : (
                         <Icon name="github" className="project-link-icon" />
                       )}

@@ -16,7 +16,7 @@ type DetailContent = {
   title: string;
   paragraphs: readonly string[];
   email?: string;
-  links?: readonly { href: string; label: string; icon: "obsidian" | "github" }[];
+  links?: readonly { href: string; label: string; icon: "obsidian" | "github" | "workspace" }[];
 };
 
 export const details: Record<DetailKey, DetailContent> = {
@@ -56,12 +56,13 @@ export const details: Record<DetailKey, DetailContent> = {
     ],
   },
   vibespace: {
-    eyebrow: "In development",
+    eyebrow: "Local-first AI agent for macOS",
     title: "VibeSpace",
     paragraphs: [
-      "A local-first AI workspace for macOS, exploring how agents and task boards can work together to move an idea forward.",
-      "It is still in development and is not publicly available yet.",
+      "A local-first AI agent for macOS that works with your files and code, runs commands, and keeps each step visible and reviewable.",
+      "Bring your own model, organize work on Kanban boards, and use reusable skills and scheduled tasks to keep things moving.",
     ],
+    links: [{ href: "https://vibespace.site", label: "Explore VibeSpace", icon: "workspace" }],
   },
 };
 
@@ -99,11 +100,12 @@ const detailsZh: Record<DetailKey, DetailContent> = {
   },
   vibespace: {
     ...details.vibespace,
-    eyebrow: "开发中",
+    eyebrow: "本地优先的 macOS AI 智能体",
     paragraphs: [
-      "一个本地优先的 macOS AI 工作空间，探索如何结合智能体与任务看板，让想法逐步成为现实。",
-      "目前仍在开发中，尚未公开发布。",
+      "一款本地优先的 macOS AI 智能体，可处理文件和代码、运行命令，并让每一步都清晰可审阅。",
+      "连接自己的模型，通过看板组织工作，并使用可复用技能和定时任务推进事务。",
     ],
+    links: details.vibespace.links?.map((link) => ({ ...link, label: "探索 VibeSpace" })),
   },
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { DetailLink } from "@/components/detail-trigger";
+import Link from "next/link";
 import { Icon } from "@/components/icon";
 import { OrbitNavigation } from "@/components/orbit-navigation";
 import { SiteFooter } from "@/components/site-footer";
@@ -34,6 +35,8 @@ export default function HomePage() {
           <p>{copy.obsidianBefore}<Tooltip id="lattice-hint" content={copy.latticeHint}><DetailLink detail="lattice" className="chip t-tt-trigger" aria-describedby="lattice-hint"><Icon name="board" className="chip-icon" /><span>Lattice Board</span></DetailLink></Tooltip>{copy.latticeAfter}<Tooltip id="weekly-hint" content={copy.weeklyHint}><DetailLink detail="weekly" className="chip t-tt-trigger" aria-describedby="weekly-hint"><Icon name="calendar" className="chip-icon" /><span>Weekly Schedule</span></DetailLink></Tooltip>{copy.weeklyAfter}</p>
 
           <p>{copy.contactBefore}<a className="text-link underline-reveal" data-link="github" href={profile.github} target="_blank" rel="noopener noreferrer">GitHub</a>{copy.afterGithub}<a className="text-link underline-reveal" href={`mailto:${profile.email}`}>{copy.hello}</a>{copy.contactEnd}</p>
+
+          <p>Explore <Link className="text-link underline-reveal" href="/rabbit-holes">Internet Rabbit Holes</Link>, a small collection of curious corners of the web.</p>
         </section>
 
         <GitHubContributions />

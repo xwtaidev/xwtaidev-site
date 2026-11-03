@@ -22,6 +22,13 @@ export function paginateDiscoveries<T>(entries: readonly T[], requestedPage: num
   return { items: entries.slice((page - 1) * pageSize, page * pageSize), page, pageCount };
 }
 
+export function parsePageNumber(input: string, pageCount: number): number | null {
+  const value = input.trim();
+  if (!/^\d+$/.test(value)) return null;
+  const page = Number(value);
+  return Number.isSafeInteger(page) && page >= 1 && page <= pageCount ? page : null;
+}
+
 export function calculatePageSize(columns: number, availableHeight: number, cardHeight: number, gap: number) {
   const rows = Math.max(1, Math.floor((availableHeight + gap) / (cardHeight + gap)));
   return Math.max(1, columns) * rows;

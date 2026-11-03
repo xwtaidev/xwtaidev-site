@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateCoverExtra, calculatePageSize, filterDiscoveries, paginateDiscoveries, pickDiscovery } from "../src/lib/rabbit-holes.ts";
+import { calculateCoverExtra, calculatePageSize, filterDiscoveries, paginateDiscoveries, parsePageNumber, pickDiscovery } from "../src/lib/rabbit-holes.ts";
 
 const entries = [
   { title: "Atlas of Space", description: "Explore the solar system", categories: ["Interactive", "Visualizations"] },
@@ -23,6 +23,14 @@ test("pagination returns the requested slice and clamps out-of-range pages", () 
   assert.deepEqual(paginateDiscoveries(items, 2, 20), { items: items.slice(20), page: 2, pageCount: 2 });
   assert.deepEqual(paginateDiscoveries(items, 10, 20), { items: items.slice(20), page: 2, pageCount: 2 });
   assert.deepEqual(paginateDiscoveries([], 2, 20), { items: [], page: 1, pageCount: 1 });
+});
+
+test("jump-to-page accepts only whole page numbers within the current results", () => {
+  assert.equal(parsePageNumber(" 03 ", 10), 3);
+  assert.equal(parsePageNumber("10", 10), 10);
+  for (const value of ["", "0", "11", "-1", "1.5", "3e0", "abc"]) {
+    assert.equal(parsePageNumber(value, 10), null);
+  }
 });
 
 test("page size fills the available viewport with complete rows", () => {

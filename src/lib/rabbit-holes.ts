@@ -16,6 +16,10 @@ export function pickDiscovery<T>(entries: readonly T[], random: () => number = M
   return entries.length ? entries[Math.floor(random() * entries.length)] ?? null : null;
 }
 
+export function getPreviewSources(local: string | undefined, original: string | undefined): string[] {
+  return [...new Set([local, original].filter((source): source is string => Boolean(source)))];
+}
+
 export function paginateDiscoveries<T>(entries: readonly T[], requestedPage: number, pageSize: number) {
   const pageCount = Math.max(1, Math.ceil(entries.length / pageSize));
   const page = Math.max(1, Math.min(requestedPage, pageCount));

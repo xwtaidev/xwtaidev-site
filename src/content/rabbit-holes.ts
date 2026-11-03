@@ -1,4 +1,6 @@
 import importedDiscoveries from "./rabbit-holes-imported.json";
+import seedPreviews from "./rabbit-holes-seed-previews.json";
+import localPreviews from "./rabbit-holes-thumbnails.json";
 
 const seedDiscoveries = [
   { id: "atlas", title: "Atlas of Space", description: "Explore the solar system and get a feel for the scale and motion of its celestial bodies.", categories: ["Interactive", "Visualizations"], url: "https://atlasof.space/", discussion: "https://news.ycombinator.com/item?id=42634787" },
@@ -51,19 +53,8 @@ export const discoveries: readonly {
 
 // Social preview URLs were read from each site's Open Graph metadata.
 export const discoveryPreviews: Readonly<Record<string, string>> = {
-  atlas: "https://atlasofspace.b-cdn.net/atlasofspace.png",
-  human: "https://talktomehuman.com/img/social-image-full-game.moz90.jpg",
-  patterns: "https://games.productartistry.com/og-image.png",
-  "radio-garden": "https://radio.garden/public/icons/rg-facebook-1.jpg",
-  earth: "https://earth.nullschool.net/sample.jpg",
-  "river-runner": "https://river-runner-global.samlearner.com/images/preview_image.png?v=2",
-  "true-size": "https://thetruesize.com/img/og-card.png?v=3",
-  pudding: "https://pudding.cool/common/assets/social/og-facebook.jpg",
-  "red-blob": "https://www.redblobgames.com/img/red-blob-2d.png",
-  ncase: "https://ncase.me/sharing/thumb.png",
-  "camerons-world": "https://www.cameronsworld.net/share-facebook.png",
-  "connected-papers": "https://www.connectedpapers.com/share-preview-img.png",
-  satellites: "https://james.darpinian.com/satellites/socialthumb.jpg",
-  spurious: "https://tylervigen.com/images/spurious-correlation-share.png",
+  ...seedPreviews,
   ...Object.fromEntries(additionalDiscoveries.filter((item) => item.image).map((item) => [item.id, item.image])),
 };
+
+export const discoveryThumbnails: Readonly<Record<string, string>> = localPreviews;

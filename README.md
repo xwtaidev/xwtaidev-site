@@ -24,6 +24,16 @@ npm start
 
 Next.js exports the production site to `out/`. Images are served as static assets, and interactive details, theme controls and entrance animations run in the browser.
 
+### Refresh navigation thumbnails
+
+Generate missing WebP previews for the Internet Rabbit Holes collection with:
+
+```sh
+npm run thumbnails:build
+```
+
+The script reads the existing preview URLs, skips thumbnails already generated, and writes content-hashed images to `public/assets/rabbit-holes/previews/` together with their mapping in `src/content/rabbit-holes-thumbnails.json`. Use `npm run thumbnails:build -- --limit=20` to process a small batch. Images that cannot be downloaded or converted continue to use the original URL and the existing artwork fallback. Commit the generated images and mapping when updating the collection.
+
 ## Writing blog posts
 
 Each article lives in `content/blog/<slug>.md`. The filename becomes its URL: `content/blog/my-first-post.md` is available at `/blog/my-first-post`. Use lowercase words separated by hyphens. There is no article registry or route file to edit.

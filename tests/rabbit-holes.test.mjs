@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateCoverExtra, calculatePageSize, filterDiscoveries, paginateDiscoveries, parsePageNumber, pickDiscovery } from "../src/lib/rabbit-holes.ts";
+import { calculateCoverExtra, calculatePageSize, filterDiscoveries, getPreviewSources, paginateDiscoveries, parsePageNumber, pickDiscovery } from "../src/lib/rabbit-holes.ts";
 
 const entries = [
   { title: "Atlas of Space", description: "Explore the solar system", categories: ["Interactive", "Visualizations"] },
@@ -16,6 +16,12 @@ test("search and category filters work together, ignoring case and whitespace", 
 test("surprise selection respects the filtered collection and handles empty results", () => {
   assert.equal(pickDiscovery([], () => 0), null);
   assert.equal(pickDiscovery(entries, () => 0.99), entries[1]);
+});
+
+test("prefers local thumbnails and preserves the original image as a fallback", () => {
+  assert.deepEqual(getPreviewSources("/assets/rabbit-holes/previews/abc.webp", "https://example.com/image.png"), ["/assets/rabbit-holes/previews/abc.webp", "https://example.com/image.png"]);
+  assert.deepEqual(getPreviewSources(undefined, "https://example.com/image.png"), ["https://example.com/image.png"]);
+  assert.deepEqual(getPreviewSources(undefined, undefined), []);
 });
 
 test("pagination returns the requested slice and clamps out-of-range pages", () => {

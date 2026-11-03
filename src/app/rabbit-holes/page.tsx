@@ -4,16 +4,26 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Icon } from "@/components/icon";
 import { SiteFooter } from "@/components/site-footer";
-import { discoveries, discoveryPreviews } from "@/content/rabbit-holes";
-import { calculateCoverExtra, calculatePageSize, filterDiscoveries, paginateDiscoveries, parsePageNumber, pickDiscovery } from "@/lib/rabbit-holes";
+import { discoveries, discoveryPreviews, discoveryThumbnails } from "@/content/rabbit-holes";
+import { calculateCoverExtra, calculatePageSize, filterDiscoveries, getPreviewSources, paginateDiscoveries, parsePageNumber, pickDiscovery } from "@/lib/rabbit-holes";
 import "./rabbit-holes.css";
 
 const categories = ["All", "Interactive", "Visualizations", "Games", "Archives", "Reading", "Audio", "Tools"] as const;
 const illustrated = new Set(["atlas", "crystals", "cursor", "human", "patterns"]);
 
 function Cover({ kind, title, category, index }: { kind: string; title: string; category: string; index: number }) {
-  const [imageFailed, setImageFailed] = useState(false);
-  const image = discoveryPreviews[kind];
+  const [sourceIndex, setSourceIndex] = useState(0);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const original = discoveryPreviews[kind];
+  const sources = getPreviewSources(original ? discoveryThumbnails[original] : undefined, original);
+  const image = sources[sourceIndex];
+
+  useEffect(() => {
+    const element = imageRef.current;
+    if (image && element?.complete && element.naturalWidth === 0) {
+      setSourceIndex((current) => current === sourceIndex ? current + 1 : current);
+    }
+  }, [image, sourceIndex]);
   return <div className={`rabbit-cover cover-${kind}${illustrated.has(kind) ? "" : ` cover-abstract cover-abstract-${index % 6}`}`} aria-hidden="true">
     {kind === "atlas" && <><span className="cover-stars">·　✦　　 ·　　✧　　·</span><span className="atlas-orbit orbit-one" /><span className="atlas-orbit orbit-two" /><span className="atlas-planet" /><span className="atlas-moon" /></>}
     {kind === "crystals" && <div className="crystal-flower">{Array.from({ length: 12 }, (_, i) => <i key={i} style={{ transform: `rotate(${i * 30}deg)` }} />)}<b /></div>}
@@ -23,7 +33,7 @@ function Cover({ kind, title, category, index }: { kind: string; title: string; 
     {!illustrated.has(kind) && <><span className="abstract-orbit abstract-orbit-one" /><span className="abstract-orbit abstract-orbit-two" /><span className="abstract-symbol">{["✳", "◌", "✧", "◎", "∿", "✦"][index % 6]}</span><span className="abstract-label">{category} / {title}</span></>}
     {/* External previews are served by their owners and need a local fallback. */}
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    {image && !imageFailed && <img className="rabbit-preview" src={image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setImageFailed(true)} />}
+    {image && <img ref={imageRef} className="rabbit-preview" src={image} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setSourceIndex((current) => current === sourceIndex ? current + 1 : current)} />}
   </div>;
 }
 

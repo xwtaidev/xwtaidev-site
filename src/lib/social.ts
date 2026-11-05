@@ -9,6 +9,7 @@ export type SocialCard = {
   description: string;
   path: string;
   image: string;
+  sourceImage?: string;
   label: string;
   headline: string;
   subtitle: string;
@@ -17,17 +18,18 @@ export type SocialCard = {
 
 export const socialPages = {
   home: {
-    title: `${profile.name} — ${profile.role}`,
-    description: profile.description,
-    path: "/", image: "/assets/social/home.png", label: "DEVELOPER & INDEPENDENT MAKER",
-    headline: "Small things,\nmade carefully.",
-    subtitle: "Useful software. A little curiosity. A lot of care.",
+    title: `${profile.name} — Independent AI Developer`,
+    description: "xwtaidev is an independent AI developer turning ideas into products, from AI tools to Obsidian plugins and productivity apps.",
+    path: "/", image: "/assets/social/home-ai-developer.png", label: "INDEPENDENT AI DEVELOPER",
+    sourceImage: "scripts/assets/social-home-ai-developer.png",
+    headline: "Turning ideas into products.",
+    subtitle: "Independent AI Developer",
     kind: "home",
   },
   products: {
     title: "Products — xwtaidev",
     description: "AI tools, Obsidian plugins, and local-first apps made by xwtaidev, an independent developer.",
-    path: "/products", image: "/assets/social/products.png", label: "PRODUCTS / SMALL TOOLS, REAL USE",
+    path: "/products", image: "/assets/social/products.png", label: "PRODUCTS / BUILT FOR REAL USE",
     headline: "Tools for a\nthoughtful workflow.",
     subtitle: "VibeSpace · Lattice Board · Weekly Schedule",
     kind: "products",

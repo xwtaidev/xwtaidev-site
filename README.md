@@ -28,7 +28,7 @@ Next.js exports the production site to `out/`. Images are served as static asset
 
 The homepage, Products, Blog, and Internet Rabbit Holes have individual 1200 × 630 PNG sharing images. Every published article gets an image with its title, category, date, and reading time. Open Graph and X/Twitter large-image cards use the same images, with accessible image descriptions.
 
-All sharing images use a forest-green background, cream typography, and a muted green grid motif, with no portraits. Article layouts keep the grid small to leave room for long titles.
+The homepage uses the selected ivory-paper and forest-green generative artwork, with the role "Independent AI Developer" and slogan "Turning ideas into products." Its original ImageGen asset is committed at `scripts/assets/social-home-ai-developer.png`; the build exports a 1200 × 630 copy to `public/assets/social/home-ai-developer.png`. The remaining sections and articles use the forest-green layout with the same developer identity. All images have no portraits; article layouts keep the grid small to leave room for long titles.
 
 `npm run build` regenerates the images before exporting; `npm run dev` also generates images for draft previews. To regenerate them separately, run `npm run social:build`. Generated PNGs live in `public/assets/social/`; commit them with changes to their content or artwork. The generator removes old images when posts are deleted or returned to draft.
 

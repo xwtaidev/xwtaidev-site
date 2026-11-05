@@ -57,10 +57,20 @@ function ornament(card) {
 }
 
 async function render(card) {
+  const filename = resolve(root, `public${card.image}`);
+  await mkdir(dirname(filename), { recursive: true });
+  if (card.sourceImage) {
+    // Keep the selected ImageGen artwork as a build input; normalize its export
+    // to the sharing dimensions without re-creating its typography or texture.
+    await sharp(resolve(root, card.sourceImage))
+      .resize(1200, 630, { fit: "cover", position: "centre" })
+      .removeAlpha().png({ compressionLevel: 9 }).toFile(filename);
+    return;
+  }
   const article = card.kind === "article";
   const layers = [
     await textLayer("xwtaidev", { left: 80, top: 70, width: 450, height: 44, size: 34, color: "#eef1df", bold: true }),
-    await textLayer("DEVELOPER & INDEPENDENT MAKER", { left: 80, top: 120, width: 720, height: 26, size: 17, color: "#a5bbab" }),
+    await textLayer(socialPages.home.label, { left: 80, top: 120, width: 720, height: 26, size: 17, color: "#a5bbab" }),
     await textLayer(card.headline, { left: 74, top: article ? 235 : 219, width: article ? 1040 : 740, height: article ? 235 : 216, size: article ? 68 : 84, bold: true }),
     await textLayer(card.subtitle, { left: 80, top: article ? 497 : 461, width: article ? 1040 : 740, height: article ? 28 : 60, size: article ? 22 : 24, color: "#b5c8b8" }),
     await textLayer(article ? "THE BLOG / XWTAIDEV" : card.kind === "home" ? "AI TOOLS / OBSIDIAN / DESKTOP APPS" : `XWTAIDEV / ${card.kind.toUpperCase().replaceAll("-", " ")}`, { left: 80, top: 572, width: 770, height: 26, size: 16, color: "#a5bbab" }),
@@ -70,8 +80,6 @@ async function render(card) {
     layers.push(await textLayer(card.label, { left: 80, top: 178, width: 1040, height: 35, size: 17, color: "#d4d9b6" }));
   }
   const background = svg(`<rect width="1200" height="630" fill="#17362c"/><path d="M80 540H1120" stroke="#416052"/>${ornament(card)}`);
-  const filename = resolve(root, `public${card.image}`);
-  await mkdir(dirname(filename), { recursive: true });
   await sharp(background).composite(layers).removeAlpha().png({ compressionLevel: 9 }).toFile(filename);
 }
 

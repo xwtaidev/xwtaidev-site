@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { BlogPostContent } from "@/components/blog-post";
 import { notFound } from "next/navigation";
 import { getBlogPosts, getPostBySlug, getAdjacentPosts } from "@/lib/blog.server";
+import { createSocialMetadata, getPostSocialCard } from "@/lib/social";
 
 export function generateStaticParams() {
   return getBlogPosts().map(({ slug }) => ({ slug }));
@@ -11,13 +12,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) notFound();
-  const description = post.description || post.title;
+  const social = createSocialMetadata(getPostSocialCard(post));
   return {
-    title: `${post.title} — xwtaidev`,
-    description,
+    ...social,
     authors: [{ name: post.author }],
     robots: post.draft ? { index: false, follow: false } : undefined,
-    openGraph: { title: post.title, description, type: "article", publishedTime: post.date, authors: [post.author] },
+    openGraph: { ...social.openGraph, type: "article", publishedTime: post.date, authors: [post.author], tags: [...post.tags] },
   };
 }
 

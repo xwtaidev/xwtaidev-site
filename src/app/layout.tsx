@@ -2,14 +2,14 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { SiteProvider } from "@/components/site-provider";
 import { LocaleProvider } from "@/components/locale-provider";
-import { profile } from "@/content/site";
+import { createSocialMetadata, siteUrl, socialPages } from "@/lib/social";
 import { localeBootstrap } from "@/lib/i18n";
 import { themeFavicons, themeBootstrap } from "@/lib/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: `${profile.name} — ${profile.role}`,
-  description: profile.description,
+  metadataBase: new URL(siteUrl),
+  ...createSocialMetadata(socialPages.home),
 };
 
 export const viewport: Viewport = { colorScheme: "light dark" };

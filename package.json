@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run social:build -- --drafts",
     "dev": "next dev --hostname 127.0.0.1 --port 4173",
+    "prebuild": "npm run social:build",
     "build": "next build",
     "start": "serve out --listen tcp://127.0.0.1:4173",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --conditions=react-server --experimental-strip-types --test tests/*.test.mjs",
+    "social:build": "node --conditions=react-server --experimental-strip-types scripts/social-images.mjs",
     "thumbnails:build": "node scripts/rabbit-holes-thumbnails.mjs",
     "post:new": "node scripts/new-post.mjs"
   },

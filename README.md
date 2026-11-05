@@ -24,6 +24,18 @@ npm start
 
 Next.js exports the production site to `out/`. Images are served as static assets, and interactive details, theme controls and entrance animations run in the browser.
 
+### Social sharing images
+
+The homepage, Products, Blog, and Internet Rabbit Holes have individual 1200 × 630 PNG sharing images. Every published article gets an image with its title, category, date, and reading time. Open Graph and X/Twitter large-image cards use the same images, with accessible image descriptions.
+
+All sharing images use a forest-green background, cream typography, and a muted green grid motif, with no portraits. Article layouts keep the grid small to leave room for long titles.
+
+`npm run build` regenerates the images before exporting; `npm run dev` also generates images for draft previews. To regenerate them separately, run `npm run social:build`. Generated PNGs live in `public/assets/social/`; commit them with changes to their content or artwork. The generator removes old images when posts are deleted or returned to draft.
+
+Canonical and sharing URLs use `https://xwtai.cn`. Edit `siteUrl` in `src/lib/social.ts` if the primary domain changes. Both the apex and `www` domain can serve the site; configure the secondary domain to redirect to the primary domain in your hosting provider. Changing these metadata URLs does not create a domain redirect.
+
+Sharing copy and page artwork are configured in `src/lib/social.ts`; rendering is in `scripts/social-images.mjs`. The renderer uses bundled, OFL-licensed Instrument Sans and LXGW WenKai Screen fonts in `scripts/fonts/`, with no external font requests or runtime image service.
+
 ### Refresh navigation thumbnails
 
 Generate missing WebP previews for the Internet Rabbit Holes collection with:

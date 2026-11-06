@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -60,11 +60,17 @@ async function render(card) {
   const filename = resolve(root, `public${card.image}`);
   await mkdir(dirname(filename), { recursive: true });
   if (card.sourceImage) {
+    const source = resolve(root, card.sourceImage);
+    const { width, height, format } = await sharp(source).metadata();
+    if (format === "png" && width === 1200 && height === 630) {
+      await copyFile(source, filename);
+      return;
+    }
     // Keep the selected ImageGen artwork as a build input; normalize its export
     // to the sharing dimensions without re-creating its typography or texture.
-    await sharp(resolve(root, card.sourceImage))
+    await sharp(source)
       .resize(1200, 630, { fit: "cover", position: "centre" })
-      .removeAlpha().png({ compressionLevel: 9 }).toFile(filename);
+      .removeAlpha().png({ palette: true, dither: 0, compressionLevel: 9 }).toFile(filename);
     return;
   }
   const article = card.kind === "article";
@@ -88,7 +94,11 @@ try {
   const cards = [...Object.values(socialPages), ...posts.map(getPostSocialCard)];
   // Clear the generated directory so deleted/drafted articles leave no images.
   await rm(output, { recursive: true, force: true });
-  for (const card of cards) await render(card);
+  for (const card of cards) {
+    await render(card);
+    const { size } = await stat(resolve(root, `public${card.image}`));
+    if (size > 1_000_000) throw new Error(`Social image exceeds 1 MB: ${card.image} (${size} bytes).`);
+  }
   console.log(`Generated ${cards.length} social images (1200 × 630) in public/assets/social.`);
 } finally {
   await rm(temporary, { recursive: true, force: true });

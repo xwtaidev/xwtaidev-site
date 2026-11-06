@@ -20,8 +20,8 @@ export const socialPages = {
   home: {
     title: `${profile.name} — Independent AI Developer`,
     description: "xwtaidev is an independent AI developer turning ideas into products, from AI tools to Obsidian plugins and productivity apps.",
-    path: "/", image: "/assets/social/home-ai-developer.png", label: "INDEPENDENT AI DEVELOPER",
-    sourceImage: "scripts/assets/social-home-ai-developer.png",
+    path: "/", image: "/assets/social/home-personal-editorial.png", label: "INDEPENDENT AI DEVELOPER",
+    sourceImage: "scripts/assets/social-home-personal-editorial.png",
     headline: "Turning ideas into products.",
     subtitle: "Independent AI Developer",
     kind: "home",

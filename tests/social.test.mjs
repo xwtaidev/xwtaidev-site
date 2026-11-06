@@ -7,6 +7,8 @@ test("every public section has its own absolute share URLs and large X card", ()
     const metadata = createSocialMetadata(card);
     assert.equal(metadata.alternates.canonical, new URL(card.path, siteUrl).href);
     assert.equal(metadata.openGraph.url, metadata.alternates.canonical);
+    assert.equal(metadata.openGraph.locale, "en_US");
+    assert.deepEqual(metadata.openGraph.alternateLocale, ["zh_CN"]);
     assert.match(metadata.openGraph.images[0].url, /^https:\/\/xwtai\.cn\/assets\/social\/.+\.png$/);
     assert.equal(metadata.openGraph.images[0].width, 1200);
     assert.equal(metadata.openGraph.images[0].height, 630);

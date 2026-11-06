@@ -75,6 +75,7 @@ export function createSocialMetadata(card: SocialCard) {
     alternates: { canonical: url },
     openGraph: {
       type: "website", siteName: profile.name, title: card.title, description: card.description,
+      locale: "en_US", alternateLocale: ["zh_CN"],
       url, images: [{ url: image, width: 1200, height: 630, type: "image/png", alt }],
     },
     twitter: {

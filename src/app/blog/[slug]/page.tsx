@@ -3,6 +3,8 @@ import { BlogPostContent } from "@/components/blog-post";
 import { notFound } from "next/navigation";
 import { getBlogPosts, getPostBySlug, getAdjacentPosts } from "@/lib/blog.server";
 import { createSocialMetadata, getPostSocialCard } from "@/lib/social";
+import { StructuredData } from "@/components/structured-data";
+import { getArticleStructuredData } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return getBlogPosts().map(({ slug }) => ({ slug }));
@@ -26,5 +28,5 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = getPostBySlug(slug);
   if (!post) notFound();
   const adjacent = getAdjacentPosts(slug);
-  return <BlogPostContent post={post} previous={adjacent.previous} next={adjacent.next} />;
+  return <><StructuredData data={getArticleStructuredData(post)} /><BlogPostContent post={post} previous={adjacent.previous} next={adjacent.next} /></>;
 }

@@ -36,6 +36,12 @@ Canonical and sharing URLs use `https://xwtai.cn`. Edit `siteUrl` in `src/lib/so
 
 Sharing copy and page artwork are configured in `src/lib/social.ts`; rendering is in `scripts/social-images.mjs`. The renderer uses bundled, OFL-licensed Instrument Sans and LXGW WenKai Screen fonts in `scripts/fonts/`, with no external font requests or runtime image service.
 
+### Site metadata and icons
+
+The site declares English Open Graph metadata with a Chinese locale alternative, `Person` and `WebSite` JSON-LD, and article-specific `BlogPosting` data. Favicon formats and the browser toolbar color follow the saved site theme. `public/site.webmanifest` supplies the site name and 192/512-pixel icons for home-screen bookmarks.
+
+Run `npm run icons:build` after changing `scripts/assets/site-symbol.svg` to regenerate light/dark SVG, PNG and ICO favicons, the Apple Touch Icon, and manifest icons. The symbol is traced from the existing `public/assets/identity.png`; no extra image-generation or tracing dependency is needed to rebuild the icons.
+
 ### Refresh navigation thumbnails
 
 Generate missing WebP previews for the Internet Rabbit Holes collection with:

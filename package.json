@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node --conditions=react-server --experimental-strip-types --test tests/*.test.mjs",
     "social:build": "node --conditions=react-server --experimental-strip-types scripts/social-images.mjs",
+    "icons:build": "node scripts/site-icons.mjs",
     "thumbnails:build": "node scripts/rabbit-holes-thumbnails.mjs",
     "post:new": "node scripts/new-post.mjs"
   },

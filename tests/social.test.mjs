@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { readFileSync } from "node:fs";
 import { createSocialMetadata, getPostSocialCard, socialPages, siteUrl } from "../src/lib/social.ts";
+
+test("previously published homepage image URLs remain valid for cached social cards", () => {
+  const current = readFileSync(new URL(`../public${socialPages.home.image}`, import.meta.url));
+  for (const path of ["/assets/social/home.png", "/assets/social/home-ai-developer.png"]) {
+    const previous = readFileSync(new URL(`../public${path}`, import.meta.url));
+    assert.ok(previous.equals(current), `${path} must serve the current homepage image`);
+  }
+});
 
 test("every public section has its own absolute share URLs and large X card", () => {
   for (const card of Object.values(socialPages)) {

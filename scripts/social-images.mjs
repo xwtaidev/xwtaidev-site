@@ -99,6 +99,12 @@ try {
     const { size } = await stat(resolve(root, `public${card.image}`));
     if (size > 1_000_000) throw new Error(`Social image exceeds 1 MB: ${card.image} (${size} bytes).`);
   }
+  // Social platforms can retain old image URLs after page metadata changes.
+  // Keep every previously published homepage image address serving valid PNGs.
+  const homepage = resolve(root, `public${socialPages.home.image}`);
+  for (const path of ["/assets/social/home.png", "/assets/social/home-ai-developer.png"]) {
+    await copyFile(homepage, resolve(root, `public${path}`));
+  }
   console.log(`Generated ${cards.length} social images (1200 × 630) in public/assets/social.`);
 } finally {
   await rm(temporary, { recursive: true, force: true });

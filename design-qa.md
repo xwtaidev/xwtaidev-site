@@ -2,7 +2,7 @@
 
 final result: passed
 
-Latest validation: Next.js migration and the user's centering, spacing, Gmail, inverse-tooltip and xwt refinements. See the latest section below for current evidence.
+Latest validation: independent theme previews from each text link and each color-card hotspot, with shared sticker dragging and visible keyboard theme selection. See the final section for current evidence.
 
 ## Target and evidence
 
@@ -152,3 +152,124 @@ Latest validation: Next.js migration and the user's centering, spacing, Gmail, i
 - Captured 18 frames. All three background scales match both underline scales in every sample; progress differs from normalized name progress by less than 0.000001. Chip bounds remain constant, with opacity 1 throughout.
 - Evidence: `artifacts/preview-product-background-reveal.gif` (looping recording) and `artifacts/preview-product-background-mobile-dark.jpg`. Opening and closing Lattice Board details works; switching themes retains completed backgrounds. All three chips fit the 390px mobile viewport, with no horizontal overflow.
 - Lint and production build exited 0. Browser console has no errors. Original light theme and desktop viewport were restored.
+
+---
+
+## Homepage stickers — visual and interaction verification
+
+final result: passed
+
+## Visual target and evidence
+
+- Source: `/Users/xu/.codex/generated_images/01a1b687-fac0-7943-8fde-1c5a11751d18/exec-a98c01e9-af91-40ca-941c-2beca7b892ac.png` (1374 × 1145).
+- User refinements: smaller realistic stickers, draggable, relevant to the site; then fewer stickers with substantially more space from the text.
+- Implementation: `/tmp/xwtaidev-sticker-qa/desktop.png` (1440 × 1200 CSS pixels, density 1, English, light theme, initial sticker positions).
+- Full-view comparison: `/tmp/xwtaidev-sticker-qa/comparison.png`. Source proportionally normalized to 1440 × 1200 and placed alongside the implementation.
+- Shareable local screenshot: `/Users/xu/.codex/visualizations/2026/11/07/01a1b687-fac0-7943-8fde-1c5a11751d18/homepage-stickers.png`.
+- Narrow-screen evidence: `/tmp/xwtaidev-sticker-qa/mobile-bottom.png` and `mobile-dark.png`, 390 × 844 CSS viewport, density 1. Viewport screenshots were used for the lower page because the browser's full-page capture did not paint off-screen content.
+- Focused inspection: opened the final Lattice WebP at native resolution to check the curled corner, print grain, alpha edges, and shadow; inspected the mobile sticker row in both themes.
+
+## Findings and comparison history
+
+- Initial six-sticker layout was too busy and close to the reading column. Removed the keyboard and crystal; retained three product stickers and the Rabbit Holes rabbit. Introduced a viewport-dependent horizontal outset (182–360px) with staggered heights.
+- Initial image grid sizing let tall intrinsic image ratios expand. Changed the sticker wrapper to block layout and constrained image minimum dimensions.
+- Post-fix desktop comparison: the four stickers occupy outer whitespace, leaving the reading column clear. Smaller scale, lower count, and wider separation are intentional user refinements to the visual target.
+- Typography: existing system font, body sizes, line heights, wrapping, and navigation remain intact. The reference's larger text and portrait were concept imagery, not requested changes.
+- Spacing: existing reading-column rhythm preserved; no initial overlap with content or persistent controls. On narrow screens the stickers form a compact row below the introduction.
+- Colors: existing site tokens preserved. Ivory die-cut borders, sage paper, charcoal terminal, and cream rabbit work in light and dark themes.
+- Images: individual generated raster assets with real alpha transparency; satin/paper texture, small curled corners, and baked contact shadows remain visible. No CSS or SVG approximations. Four displayed assets total approximately 159 KB.
+- Content: VibeSpace, Lattice Board, Weekly Schedule, and Internet Rabbit Holes match existing homepage content. Existing page copy remains unchanged.
+- No remaining actionable P0/P1/P2 visual findings.
+
+## Interaction and automated checks
+
+- Actual mouse drag moved VibeSpace by 70 × 50px without opening its detail dialog.
+- Narrow-viewport mouse drag moved it by 30 × -35px without navigation.
+- Dragging beyond the top/right edges clamped the sticker at top 12px / right 1428px in a 1440px viewport.
+- Arrow keys move a focused sticker; Escape restores its position; Enter opens its destination.
+- Verified all three product dialogs and Rabbit Holes navigation in the browser.
+- Resizing restores the initial layout; no horizontal overflow at 320, 390, 960, 1024, or 1440px.
+- Dark/light appearance checked; browser warning/error logs empty.
+- Touch hardware was not available; touch input uses the same pointer-event handlers.
+- `npm test`: 99 passed. `npm run typecheck`, `npm run lint`, `npm run build`, and `git diff --check`: passed.
+
+## Image generation
+
+Generated with built-in ImageGen, using the selected first mockup as the material/style reference. Individual transparent PNG outputs were trimmed, resized to at most 480px, and encoded as WebP with quality 88 and alpha quality 100.
+
+Shared prompt: one isolated, front-on, physically realistic thin die-cut adhesive sticker; ivory contour border; fine printed ink/paper grain; subtle satin laminate; soft upper-left light; short contact shadow in transparent alpha; a tiny lifted corner showing pale underside. The subject is printed art on the sticker, not a freestanding miniature object. No backdrop or additional objects; recognizable at approximately 80–104px.
+
+- `/public/assets/stickers/vibespace.webp`: charcoal terminal-window sticker, muted traffic-light dots, printed `>_`, small crisp “VibeSpace,” tiny upper-right peel.
+- `/public/assets/stickers/lattice.webp`: layered sage Kanban notes, three cream task lanes, handwritten “Lattice,” curled cream-backed upper-right corner.
+- `/public/assets/stickers/weekly-schedule.webp`: cream open weekly planner, sage weekday marks and checks, small plum bookmark, curled lower-right tip.
+- `/public/assets/stickers/rabbit-holes.webp`: original cream/charcoal engraved leaping rabbit, long ears, small sage star, subtle lower-right curl.
+
+## Completion checklist
+
+- [x] Real raster stickers and transparent edges verified.
+- [x] Four site-relevant subjects with clear surrounding space.
+- [x] Drag, click, keyboard, bounds, and responsive behavior verified.
+- [x] Existing copy and navigation preserved.
+- [x] Browser and automated checks passed.
+
+## Obsidian themes and palette sticker
+
+final result: passed
+
+### Target and comparison
+
+- Approved change: keep the four-sticker layout and wide outer whitespace; replace only the weekly-planner sticker with a realistic fan of three theme color cards. Add English theme introductions and a screenshot/GitHub gallery.
+- Layout source: `/tmp/xwtaidev-sticker-qa/desktop.png`, 1440 × 1200 pixels.
+- Implementation: `/tmp/xwt-theme-qa/homepage-desktop.png`, 1440 × 1200 pixels, English/light/initial sticker positions.
+- Combined full-view evidence: `/tmp/xwt-theme-qa/comparison.png`, both views at identical CSS size and density 1, no normalization required.
+- Public-facing local capture: `/Users/xu/.codex/visualizations/2026/11/07/01a1b687-fac0-7943-8fde-1c5a11751d18/homepage-themes.png`.
+- Focused material check: opened `/public/assets/stickers/themes.webp` at native 480 × 455 resolution. Verified three readable theme labels, theme-accurate swatches, fine paper grain, brass pivot, ivory cutline, and curled corners. Verified real alpha with fully transparent corners.
+- Gallery evidence: `/tmp/xwt-theme-qa/dialog-desktop-top.png`, `dialog-desktop-bottom.png`, `dialog-mobile-top.png`, `dialog-mobile-bottom.png`, and `dialog-mobile-dark.png`.
+
+### Fidelity and corrections
+
+- Typography and colors: existing system fonts, body sizes, page colors, link treatment, and paragraph spacing retained. Theme names use three separate inline links so each remains easy to click when the sentence wraps on a phone.
+- Layout: only one paragraph added; existing stickers retain their outer-margin placements. Four stickers remain, with the color deck replacing the planner in the same slot. Small vertical shifts from centering the taller reading column are expected.
+- Gallery: follows the existing native detail dialog, using simple separators instead of nested cards. Its close control stays visible while scrolling. Each theme has its own description, screenshot, full-size image link, and GitHub link.
+- Imagery and content: real repository screenshots were converted to local WebP without cropping. Morandi and Inkblade are labeled browser previews; Duskstone is labeled Obsidian on macOS, consistent with their READMEs. Screenshots are not generated UI approximations.
+- No remaining actionable P0/P1/P2 findings. The original Morandi screenshot is 512 × 288; the gallery preserves its native maximum width rather than enlarging it.
+
+### Interaction and validation
+
+- Dragged the palette sticker 60px right and 30px up without opening the dialog. Escape restored its original position; clicking then opened the theme gallery.
+- Opened the gallery through the sticker, keyboard Enter, and an individual theme-name link on mobile.
+- All three screenshot images loaded with nonzero natural width; verified all three GitHub destinations against the repositories.
+- Scrolled to Duskstone and verified the close control stayed visible and usable. Checked desktop, 390px mobile, dark mode, and a 320px viewport. At 320px, document width was 305px and dialog client/scroll widths both 248px: no horizontal overflow.
+- Browser warning/error logs empty. Independent code review found no important issues.
+- `npm test`: 99 passed. Type checking, lint, production build, and `git diff --check`: passed.
+
+### Sources and generated asset
+
+- Morandi screenshot: `https://raw.githubusercontent.com/xwtaidev/obsidian-morandi-theme/main/screenshot.png` → `/public/assets/themes/morandi.webp`.
+- Inkblade screenshot: `https://raw.githubusercontent.com/xwtaidev/obsidian-inkblade-theme/main/screenshot.png` → `/public/assets/themes/inkblade.webp`.
+- Duskstone screenshot: `https://raw.githubusercontent.com/xwtaidev/obsidian-duskstone-theme/main/images/light.png` → `/public/assets/themes/duskstone.webp`.
+- Palette sticker: `/public/assets/stickers/themes.webp`, 480 × 455, approximately 43 KB. Built-in ImageGen; transparent output, trimmed/resized and encoded at WebP quality 88 / alpha quality 100.
+- Exact generation prompt and original output path: `artifacts/themes-sticker-prompt.txt`. Brief: three fanned paper cards labeled Morandi, Inkblade, and Duskstone, using the actual theme palettes, a single brass pivot, subtle paper texture and curled corners, consistent upper-left lighting, and one thin ivory die-cut outline.
+
+## Individual theme previews and palette hotspots
+
+final result: passed
+
+- Approved refinement: Morandi, Inkblade, and Duskstone each open only their own description, screenshot, and GitHub link. The existing fan sticker keeps its artwork and layout, with one clickable region per visible card.
+- Source layout/artwork: `/tmp/xwt-theme-qa/dialog-desktop-top.png` and `/public/assets/stickers/themes.webp`.
+- Desktop evidence: `/tmp/xwt-individual-theme-qa/inkblade-desktop.png`, 1440 × 1200 CSS pixels, density 1, English/light.
+- Full-view comparison: `/tmp/xwt-individual-theme-qa/comparison.png`; source and implementation use 1440 × 1200 frames, density 1. The shorter dialog and single screenshot are intentional changes, replacing the multi-theme collection view at these entry points.
+- Focused desktop evidence: `/Users/xu/.codex/visualizations/2026/11/07/01a1b687-fac0-7943-8fde-1c5a11751d18/inkblade-individual-preview.png` (dialog crop).
+- Mobile evidence: `/tmp/xwt-individual-theme-qa/duskstone-mobile.png`, 390 × 844 CSS viewport. Keyboard evidence: `keyboard-focus.png` in the same directory.
+
+### Visual and interaction checks
+
+- Fonts, colors, portrait, reading-column spacing, all four sticker positions, paper texture, curled corners, and the original fan image remain unchanged.
+- Theme dialogs retain the existing detail surface, close behavior, screenshot sizing, and accurate screenshot captions. Each now has the selected theme name as its main heading and one GitHub action below its image.
+- All six desktop entries were opened: three text links and three palette hotspots. Each displayed exactly one correct screenshot and one matching repository link, with no other theme content inside the dialog.
+- All three palette hotspots were also clicked at 390px; each opened the correct individual theme with no horizontal dialog overflow (client/scroll widths both 333px).
+- Dragging from the Morandi card moved the entire fan by 50 × 30px without opening a dialog. Escape reset it; ArrowRight moved the group and Enter on Inkblade opened only Inkblade.
+- Regression: the original VibeSpace sticker still dragged 20 × 15px without navigation and opened its own detail dialog on click afterward.
+- Review finding [P2, fixed]: identical focus outlines did not distinguish the three palette targets. Added a visible matching theme-name label below the fan for keyboard focus. Verified Tab selected Inkblade and only its label had opacity 1; Morandi and Duskstone remained hidden. Independent review confirmed the issue resolved.
+- Browser error/warning logs empty. No remaining actionable P0/P1/P2 findings.
+- `npm test`: 99 passed. Type checking, lint, production build, and `git diff --check`: passed.

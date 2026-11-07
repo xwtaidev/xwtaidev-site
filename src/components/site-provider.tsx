@@ -15,6 +15,7 @@ import { getDetails, type DetailKey } from "@/content/site";
 import { getServerTheme, getTheme, subscribeTheme, toggleTheme, type Theme } from "@/lib/theme";
 import { Icon } from "./icon";
 import { useLocale } from "./locale-provider";
+import { ObsidianThemeGallery } from "./obsidian-theme-gallery";
 
 type SiteContextValue = {
   theme: Theme;
@@ -84,6 +85,8 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       <dialog
         ref={dialogRef}
         className="detail-dialog t-modal"
+        data-detail={selected ?? undefined}
+        data-theme-preview={view?.themeId ?? (selected === "themes" ? "collection" : undefined)}
         aria-labelledby="detail-title"
         aria-describedby="detail-description"
         onCancel={(event) => { event.preventDefault(); closeDetails(); }}
@@ -97,6 +100,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
           <h2 id="detail-title">{view?.title}</h2>
           <div className="dialog-copy" id="detail-description">
             {view?.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            {(view?.themeId || selected === "themes") && <ObsidianThemeGallery themeId={view?.themeId} />}
             {view?.email && (
               <p className="project-reference">
                 <a href={`mailto:${view.email}`}>

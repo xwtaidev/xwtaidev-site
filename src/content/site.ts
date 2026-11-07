@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n";
+import { obsidianThemes, type ObsidianThemeId } from "./obsidian-themes.ts";
 
 export const profile = {
   name: "xwtaidev",
@@ -16,10 +17,19 @@ type DetailContent = {
   title: string;
   paragraphs: readonly string[];
   email?: string;
+  themeId?: ObsidianThemeId;
   links?: readonly { href: string; label: string; icon: "obsidian" | "github" | "workspace" }[];
 };
 
+const themeDetails = Object.fromEntries<DetailContent>(obsidianThemes.map((theme) => [theme.id, {
+  eyebrow: "Open-source Obsidian theme",
+  title: theme.name,
+  paragraphs: [],
+  themeId: theme.id,
+}])) as Record<ObsidianThemeId, DetailContent>;
+
 export const details: Record<DetailKey, DetailContent> = {
+  ...themeDetails,
   about: {
     eyebrow: "A little about me",
     title: "Small things, made carefully.",
@@ -64,11 +74,20 @@ export const details: Record<DetailKey, DetailContent> = {
     ],
     links: [{ href: "https://vibespace.site", label: "Explore VibeSpace", icon: "workspace" }],
   },
+  themes: {
+    eyebrow: "Open-source Obsidian themes",
+    title: "Different moods, the same notes.",
+    paragraphs: [
+      "Three themes exploring color, typography, and the feeling of a writing space. Each supports light and dark modes, with no required plugins or remote fonts.",
+    ],
+  },
 };
 
-export type DetailKey = "about" | "lattice" | "weekly" | "vibespace";
+export type DetailKey = "about" | "lattice" | "weekly" | "vibespace" | "themes" | ObsidianThemeId;
 
 const detailsZh: Record<DetailKey, DetailContent> = {
+  ...themeDetails,
+  themes: details.themes,
   about: {
     ...details.about,
     eyebrow: "关于我",
